@@ -25,6 +25,8 @@ German translation for [Harry Potter and the Methods of Rationality](https://www
 - [ ] define best practice
 - [ ] manually tune the translations of all chapters
 - [ ] contact authors of other German in progress translations
+- [ ] complete translation https://www.fanfiktion.de/s/60044849000ccc541aef297e/1/Ubersetzung-Harry-Potter-und-die-Methoden-des-rationalen-Denkens-Harry-Potter-and-the-methods-of-rationality
+- [ ] 
 
 
 
