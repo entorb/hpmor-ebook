@@ -15,8 +15,8 @@ German translation for [Harry Potter and the Methods of Rationality](https://www
 ### LaTeX setup
 - [ ] base structure
 - [ ] decide how to handle source and translated text in .tex file
-- [ ] compile to PDF file
-- [ ] compile to EPUB file
+- [ ] compile to PDF file 
+- [ ] compile to EPUB file https://tex.stackexchange.com/questions/1551/use-latex-to-produce-epub 
 - [ ] compile to MOBI file
 
 ### perform the translation to German
