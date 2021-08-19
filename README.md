@@ -6,6 +6,7 @@ German translation for [Harry Potter and the Methods of Rationality](https://www
 - [ ] https://www.reddit.com/r/HPMOR/comments/gvj0x2/german_printed_version_of_book_1_anyone_interested/
 - [ ] source     https://github.com/rjl20/hpmor
 - [ ] translated https://github.com/elkablo/hpmor and https://blackhole.sk/~kabel/tmp/hpmor-1.pdf
+- [ ] German Audiobook https://www.youtube.com/watch?v=h32Ht-HUbL0&list=PLfgJSXz3-j3aYhWyR3Q5JzcI3h_eibPls
 
 ### source text fetch and convert to LaTeX
 - [ ] download original EN chapter .html files
