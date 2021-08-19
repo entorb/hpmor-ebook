@@ -10,6 +10,7 @@ German translation for [Harry Potter and the Methods of Rationality](https://www
 
 ### check out EPUBs
 - [ ] https://web.archive.org/web/20170624094133/http://ikeran.org/rationality.epub
+- [ ] https://pandoc.org is a doc converter
 
 ### check out DE translations
 - [ ] von Schneefl0cke https://www.fanfiktion.de/s/60044849000ccc541aef297e/1/Ubersetzung-Harry-Potter-und-die-Methoden-des-rationalen-Denkens-Harry-Potter-and-the-methods-of-rationality
