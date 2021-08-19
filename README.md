@@ -12,6 +12,7 @@ German translation for [Harry Potter and the Methods of Rationality](https://www
 - [ ] https://web.archive.org/web/20170624094133/http://ikeran.org/rationality.epub
 - [ ] https://pandoc.org is a doc converter
 - [ ] https://calibre-ebook.com another, also OpenSource
+- [ ] Fanfic to epub http://ff2ebook.com/index.php
 - [ ] It seems that LaTeX -> ePub is not a preferred way
 
 ### check out DE translations
