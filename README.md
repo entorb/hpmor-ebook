@@ -1,7 +1,7 @@
-# hpmor-translation
-Scripts for creaton of ebooks for [Harry Potter and the Methods of Rationality](https://www.hpmor.com) by Eliezer Yudkowsky. Supporting Englisch original and German translation by Schneefl0cke.
+# HPMOR: generator for eBooks in English and German
+Scripts for generating eBooks for [Harry Potter and the Methods of Rationality](https://www.hpmor.com) by Eliezer Yudkowsky. Featuring Englisch original and German translation by Schneefl0cke.
 
-My generated ebooks can be found at [https://entorb.net/hpmor/](https://entorb.net/hpmor/).
+Generated eBooks can be found at [https://entorb.net/hpmor/](https://entorb.net/hpmor/).
 
 ## TODOs
 - [x] find [complete German translation](https://www.fanfiktion.de/s/60044849000ccc541aef297e/)
@@ -39,6 +39,6 @@ My generated ebooks can be found at [https://entorb.net/hpmor/](https://entorb.n
 - [HPMOR epub by ikeran.org via web.archive](https://web.archive.org/web/20170624094133/http://ikeran.org/rationality.epub) (linked at hpmor.com)
 - Tools
   - [Pandoc](https://pandoc.org) command line doc converter
-  - [calibre](https://calibre-ebook.com) another, also OpenSource
-  - [Fanfic to epub](http://ff2ebook.com/index.php)
+  - [calibre](https://calibre-eBook.com) another, also OpenSource
+  - [Fanfic to epub](http://ff2eBook.com/index.php)
 - LaTeX -> EPUB is not a preferred way, as EPUB under the hood is html.
