@@ -5,7 +5,6 @@ import requests
 
 from bs4 import BeautifulSoup  # pip install beautifulsoup4
 
-# TODO: fetch original EN HPMOR as well
 
 languages = ('en', 'de')
 
@@ -27,19 +26,19 @@ def download_file(url: str, filepath: str):
 
 def download_all_chapters():
     """Downloads into html-1-download/<lang>/ only if fileOut does not exist"""
-    chapter_last = 122
+    chapter_last = 0
     for lang in languages:
         if lang == 'en':
             chapter_last = 122
-            urlBase = f"http://www.hpmor.com/chapter/<---chapter--->"
+            url_base = f"http://www.hpmor.com/chapter/<---chapter--->"
         elif lang == 'de':
             chapter_last = 121
-            urlBase = f"https://www.fanfiktion.de/s/60044849000ccc541aef297e/<---chapter--->/"
+            url_base = f"https://www.fanfiktion.de/s/60044849000ccc541aef297e/<---chapter--->/"
         for chapter in range(0+1, chapter_last+1):
             fileOut = f"html-1-download/{lang}/%03d.html" % chapter
             if not os.path.exists(fileOut):
                 print(f"downloading chapter %03d" % chapter)
-                url = urlBase.replace("<---chapter--->", str(chapter))
+                url = url_base.replace("<---chapter--->", str(chapter))
                 download_file(url=url, filepath=fileOut)
 
 
@@ -86,7 +85,6 @@ def extract_chapter_text():
                 myElement = soup.find("select", {"id": "kA"})
                 myElement = myElement.find("option", {"selected": "selected"})
                 myTitle = myElement.text  # chars only, no tags
-                del myElement
 
                 # find body text
                 myElement = soup.find("div", {"class": "user-formatted-inner"})
@@ -99,7 +97,7 @@ def extract_chapter_text():
             myTitle = re.sub('\s+', " ", myTitle,
                              flags=re.DOTALL | re.IGNORECASE)
             print(myTitle)
-            # remove div start and end
+            # remove outer encapsolating div start and end
             myBody = re.sub('^<div[^>]*>', "", myBody,
                             flags=re.DOTALL | re.IGNORECASE)
             myBody = re.sub('</div>[^>]*$', "", myBody,
@@ -179,6 +177,9 @@ def html_modify():
 def html_tuning(s: str, lang: str) -> str:
     """
     cleanup spans and divs
+    fix small typos
+    fix "
+    TODO: add unit tests!
     """
     # whitespace at start of line
     s = re.sub('\n\s+', "\n", s)
@@ -294,6 +295,8 @@ def html_tuning(s: str, lang: str) -> str:
     return s
 
 
-# download_all_chapters()
-# extract_chapter_text()
-html_modify()
+if __name__ == "__main__":
+    # unit_tests()
+    # download_all_chapters()
+    # extract_chapter_text()
+    html_modify()
