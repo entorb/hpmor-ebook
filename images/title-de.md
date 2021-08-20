@@ -24,7 +24,7 @@ Vorwort des eBooks
 ==================
 Dieses Buch ist nicht mein Werk, ich habe es lediglich ins eBook Format konvertiert.
 
-Das englische Original 'Harry Potter and the Methods of Rationality' von Eliezer Yudkowsky gibt es hier: [https://www.hpmor.com](https://www.hpmor.com)
+Das großartige englische Original 'Harry Potter and the Methods of Rationality' von Eliezer Yudkowsky gibt es hier: [https://www.hpmor.com](https://www.hpmor.com)
 
 Dieses eBook ist eine Konvertierung der Fan-Übersetzung von Schneefl0cke, die hier zu finden ist: 
 [https://www.fanfiktion.de/s/60044849000ccc541aef297e/](https://www.fanfiktion.de/s/60044849000ccc541aef297e/)
@@ -33,3 +33,4 @@ Dieses eBook wurde am 2021-08-20 erstellt und ist hier zu Hause:
 [https://entorb.net/hpmor/](https://entorb.net/hpmor/)
 
 Viel Spaß auf der Reise wünscht Torben Menke
+<div style="page-break-after: always;"></div>

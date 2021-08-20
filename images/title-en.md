@@ -17,11 +17,12 @@ ibooks:
 ...
 Preamble of this eBook
 ======================
-This book is not my work, I just converted the text into ebook formats.
+This book is not my work, I just converted the text into eBook formats.
 
-The original version of this book 'Harry Potter and the Methods of Rationality' by Eliezer Yudkowsky is here: [https://www.hpmor.com](https://www.hpmor.com)
+The original version of this great book 'Harry Potter and the Methods of Rationality' by Eliezer Yudkowsky is here: [https://www.hpmor.com](https://www.hpmor.com)
 
-This ebook was created 2021-08-20 and has it's home is:
+This eBook was created 2021-08-20 and has it's home is:
 [https://entorb.net/hpmor/](https://entorb.net/hpmor/)
 
-Have fun, Torben Menke
+Have fun on your journey, Torben Menke
+<div style="page-break-after: always;"></div>
