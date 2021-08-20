@@ -1,67 +1,89 @@
-# import lxml.html  # pip install lxml
-from bs4 import BeautifulSoup  # pip install beautifulsoup4
 import os
 import re
 import glob
 import requests
 
-os.makedirs('html-1-download/', exist_ok=True)
-os.makedirs('html-2-chapters-extracted/', exist_ok=True)
-os.makedirs('html-3-cleaned/', exist_ok=True)
+from bs4 import BeautifulSoup  # pip install beautifulsoup4
+
+# TODO: fetch original EN HPMOR as well
+
+languages = ('en', 'de')
+
+for lang in languages:
+    for dir in (f'html-1-download/{lang}/', f'html-2-chapters-extracted/{lang}/', f'html-3-cleaned/{lang}/', 'output'):
+        os.makedirs(dir, exist_ok=True)
 
 
 def download_file(url: str, filepath: str):
+    """download file from url to filepath"""
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0 ',
     }
-    cont = requests.get(url, headers=headers).content
-    with open(filepath, mode='wb', encoding='utf-8', newline='\n') as fh:
+    cont = requests.get(url, headers=headers, verify=True).content
+    # verify=False -> skip SSL cert verification: CERTIFICATE_VERIFY_FAILED
+    with open(filepath, mode='bw') as fh:
         fh.write(cont)
 
 
-def download_chapter(chapter: int, filepath: str):
-    url = f"https://www.fanfiktion.de/s/60044849000ccc541aef297e/{chapter}/"
-    download_file(url=url, filepath=filepath)
-
-
 def download_all_chapters():
-    """Downloads into html-1-download/"""
-    for chapter in range(1, 122):
-        fileOut = "html-1-download/%03d.html" % chapter
-        if not os.path.exists(fileOut):
-            print(f"downloading chapter %03d" % chapter)
-            download_chapter(chapter=chapter, filepath=fileOut)
-#    del fileOut, chapter
+    """Downloads into html-1-download/<lang>/ only if fileOut does not exist"""
+    chapter_last = 122
+    for lang in languages:
+        if lang == 'en':
+            chapter_last = 122
+            urlBase = f"http://www.hpmor.com/chapter/<---chapter--->/"
+        elif lang == 'de':
+            chapter_last = 121
+            urlBase = f"https://www.fanfiktion.de/s/60044849000ccc541aef297e/<---chapter--->/"
+        for chapter in range(0+1, chapter_last+1):
+            fileOut = f"html-1-download/{lang}/%03d.html" % chapter
+            if not os.path.exists(fileOut):
+                print(f"downloading chapter %03d" % chapter)
+                url = urlBase.replace("<---chapter--->", str(chapter))
+                download_file(url=url, filepath=fileOut)
 
 
 def extract_chapter_text():
-    """extract chapter text from html and writes result into html-2-chapters-extracted/"""
-    for fileIn in sorted(glob.glob("html-1-download/*.html")):
-        (filePath, fileName) = os.path.split(fileIn)
-        fileOut = f"html-2-chapters-extracted/{fileName}"
-        with open(fileIn, mode='r', encoding='utf-8', newline='\n') as fh:
-            cont = fh.read()
+    """
+    extract chapter text from html and writes result into html-2-chapters-extracted/
+    2 modifications are done: removal of comments and removal of javascript
+    """
+    for lang in languages:
+        for fileIn in sorted(glob.glob(f"html-1-download/{lang}/*.html")):
+            (filePath, fileName) = os.path.split(fileIn)
+            fileOut = f"html-2-chapters-extracted/{lang}/{fileName}"
+            with open(fileIn, mode='r', encoding='utf-8', newline='\n') as fh:
+                cont = fh.read()
 
-        soup = BeautifulSoup(cont, features='html.parser')
+            # cleanup comments and scripts
+            cont = re.sub('<!--.*?-->', "", cont, flags=re.DOTALL)
+            cont = re.sub('<script.*?</script>', "", cont,
+                          flags=re.DOTALL | re.IGNORECASE)
 
-        # find header
-        myElement = soup.find("select", {"id": "kA"})
-        myElement = myElement.find("option", {"selected": "selected"})
-        myTitle = myElement.text  # chars only, no tags
-        del myElement
-        # print(myTitle)
+            soup = BeautifulSoup(cont, features='html.parser')
 
-        # find body text
-        myElement = soup.find("div", {"class": "user-formatted-inner"})
-        myBody = myElement.prettify()
-        # myBody = myElement.encode()
-        # myBody = str(myElement)
-        del myElement
+            myTitle = ""
+            myBody = ""
 
-        out = f"<h1>{myTitle}</h1>\n{myBody}\n"
+            if lang == 'de':
+                # find chapter name from dropdown
+                myElement = soup.find("select", {"id": "kA"})
+                myElement = myElement.find("option", {"selected": "selected"})
+                myTitle = myElement.text  # chars only, no tags
+                del myElement
+                # print(myTitle)
 
-        with open(fileOut, mode='w', encoding='utf-8', newline='\n') as fh:
-            fh.write(out)
+                # find body text
+                myElement = soup.find("div", {"class": "user-formatted-inner"})
+                myBody = myElement.prettify()
+                # myBody = myElement.encode()
+                # myBody = str(myElement)
+                del myElement
+
+            out = f"<h1>{myTitle}</h1>\n{myBody}\n"
+
+            with open(fileOut, mode='w', encoding='utf-8', newline='\n') as fh:
+                fh.write(out)
 
 
 def html_modify():
@@ -81,9 +103,9 @@ def html_modify():
                  encoding='utf-8', newline='\n')
     fhAll.write(html_start)
 
-    for fileIn in sorted(glob.glob("html-2-chapters-extracted/*.html")):
+    for fileIn in sorted(glob.glob("html-2-chapters-extracted/de/*.html")):
         (filePath, fileName) = os.path.split(fileIn)
-        fileOut = f"html-3-cleaned/{fileName}"
+        fileOut = f"html-3-cleaned/de/{fileName}"
         with open(fileIn, mode='r', encoding='utf-8', newline='\n') as fh:
             cont = fh.read()
         soup = BeautifulSoup(cont, features='html.parser')
@@ -99,7 +121,7 @@ def html_modify():
         # s = str(myElement)
         s = myElement.prettify()
 
-        s = html_cleanup(s)
+        s = html_tuning(s)
         myElement = BeautifulSoup(s, features='html.parser')
         myBody = myElement.prettify()
         # myBody = myElement.encode()
@@ -117,16 +139,18 @@ def html_modify():
     fhAll.close()
 
 
-def html_cleanup(s: str) -> str:
+def html_tuning(s: str) -> str:
     """
-    fix html
+    cleanup spans and divs
     """
-    # cleanup comments and scripts
-    s = re.sub('<!--.*?-->', "", s, flags=re.DOTALL)
-    s = re.sub('<script.*?</script>', "", s,
-               flags=re.DOTALL | re.IGNORECASE)
-
-    # cleanup spans
+    # whitespace at start of line
+    s = re.sub('\n\s+', "\n", s)
+    #
+    # alternatively define them via
+    # <style>
+    # div.user_center {	text-align: center; }
+    # </style>
+    #
     s = re.sub('<span class="user_normal">(.*?)</span>', r"\1", s,
                flags=re.DOTALL | re.IGNORECASE)
     s = re.sub('<span class="user_underlined">(.*?)</span>', r"<u>\1</u>", s,
@@ -148,27 +172,53 @@ def html_cleanup(s: str) -> str:
                flags=re.DOTALL | re.IGNORECASE)
     s = re.sub('<div class="user_left">(.*?)</div>', r"<left>\1</left>", s,
                flags=re.DOTALL | re.IGNORECASE)
+    # TODO: this is dangerous if another div is in the doc. better fix first and last line manually?
     s = re.sub('<div class="user-formatted-inner">(.*?)</div>', r"\1", s,
                flags=re.DOTALL | re.IGNORECASE)
     # 4x br -> 2x br
-    s = re.sub('<br/>\s*<br/>\s*<br/>\s*<br/>', "<br/><br/>", s, flags=re.DOTALL | re.IGNORECASE)
+    s = re.sub('<br/>\s*<br/>\s*<br/>\s*<br/>', "<br/><br/>",
+               s, flags=re.DOTALL | re.IGNORECASE)
     # 3x br -> 2x br
-    s = re.sub('<br/>\s*<br/>\s*<br/>', "<br/><br/>", s, flags=re.DOTALL | re.IGNORECASE)
+    s = re.sub('<br/>\s*<br/>\s*<br/>', "<br/><br/>",
+               s, flags=re.DOTALL | re.IGNORECASE)
     # double br
     # s = re.sub('<br/>\s*<br/>', "<br/>", s, flags=re.DOTALL | re.IGNORECASE)
-    s = re.sub('<i>\s*</i>', "", s, flags=re.DOTALL | re.IGNORECASE)
-    s = re.sub('<u>\s*</u>', "", s, flags=re.DOTALL | re.IGNORECASE)
-    s = re.sub('<b>\s*</b>', "", s, flags=re.DOTALL | re.IGNORECASE)
-    s = re.sub('<center>\s*</center>', "", s, flags=re.DOTALL | re.IGNORECASE)
+    # drop empty tags 3x
+    s = re.sub(r'<(\w+)>\s*</\1>', "", s, flags=re.DOTALL | re.IGNORECASE)
+    s = re.sub(r'<(\w+)>\s*</\1>', "", s, flags=re.DOTALL | re.IGNORECASE)
+    s = re.sub(r'<(\w+)>\s*</\1>', "", s, flags=re.DOTALL | re.IGNORECASE)
     # double br again
     # s = re.sub('<br/>\s*<br/>', "<br/>", s, flags=re.DOTALL | re.IGNORECASE)
 
+    # if more than 300 char -> use p instead of br
+    s = re.sub('<br/>\n(.{200,})\n', r'<p>\n\1\n</p>', s, flags=re.IGNORECASE)
+    s = re.sub('<br/>\s*<p>', "<p>", s, flags=re.DOTALL | re.IGNORECASE)
+    s = re.sub('</p>\s*<br/>', "</p>", s, flags=re.DOTALL | re.IGNORECASE)
+
+    # multiple spaces
+    s = re.sub('  +', " ", s)
+    # space before puctuation
+    s = re.sub(' ([\.,:;])', r"\1", s)
+    # space after puctuation
+    s = re.sub('([a-zA-Z][\.,:;])([A-Z])', r"\1 \2", s)
+
     # spaces before " at lineend
     s = re.sub('\s+"\n', '"\n', s, flags=re.DOTALL | re.IGNORECASE)
-
+    # empty lines
+    s = re.sub('\n\n+', "\n", s)
+    # remove linebreaks from sentences containing quotation marks
+    # 3x
+    s = re.sub(r'("\w[^"]+)\s+<br/>\s+([^"]+)\s+<br/>\s+([^"]+)\s+<br/>\s+([^"]+")', r'\1\2\3\4',
+               s, flags=re.DOTALL | re.IGNORECASE)
+    # 2x
+    s = re.sub(r'("\w[^"]+)\s+<br/>\s+([^"]+)\s+<br/>\s+([^"]+")', r'\1\2\3',
+               s, flags=re.DOTALL | re.IGNORECASE)
+    # 1x
+    s = re.sub(r'("\w[^"]+)\s+<br/>\s+([^"]+")', r'\1\2',
+               s, flags=re.DOTALL | re.IGNORECASE)
     return s
 
 
-# download_all_chapters()
-# extract_chapter_text()
+download_all_chapters()
+extract_chapter_text()
 html_modify()
