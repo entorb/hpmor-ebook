@@ -1,5 +1,5 @@
 # HPMOR: generator for eBooks in English and German
-Script for generating eBooks for [Harry Potter and the Methods of Rationality (HPMOR)](https://www.hpmor.com) by Eliezer Yudkowsky. Featuring Englisch original test as well as German translation by Schneefl0cke.
+Script for generating eBooks for [Harry Potter and the Methods of Rationality (HPMOR)](https://www.hpmor.com) by Eliezer Yudkowsky. Featuring Englisch original text as well as German translation by Schneefl0cke.
 
 Generated eBooks can be found at [https://entorb.net/hpmor/](https://entorb.net/hpmor/).
 
