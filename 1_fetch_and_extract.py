@@ -31,7 +31,7 @@ def download_all_chapters():
     for lang in languages:
         if lang == 'en':
             chapter_last = 122
-            urlBase = f"http://www.hpmor.com/chapter/<---chapter--->/"
+            urlBase = f"http://www.hpmor.com/chapter/<---chapter--->"
         elif lang == 'de':
             chapter_last = 121
             urlBase = f"https://www.fanfiktion.de/s/60044849000ccc541aef297e/<---chapter--->/"
@@ -65,20 +65,45 @@ def extract_chapter_text():
             myTitle = ""
             myBody = ""
 
-            if lang == 'de':
+            if lang == 'en':
+                # find chapter name from dropdown
+                # myElement = soup.find("form", {"id": "nav-form-top"})
+                # myElement = myElement.find("select", {"name": "chapter"})
+                # myElement = myElement.find("option", {"selected": ""})
+                myElement = soup.find("div", {"id": "chapter-title"})
+                myTitle = myElement.text  # chars only, no tags
+                myTitle = re.sub('^Chapter (\d+):', r"\1.", myTitle,
+                                 flags=re.DOTALL | re.IGNORECASE)
+
+                # find body text
+                myElement = soup.find("div", {"id": "storycontent"})
+                myBody = myElement.prettify()
+                # myBody = myElement.encode()
+                # myBody = str(myElement)
+
+            elif lang == 'de':
                 # find chapter name from dropdown
                 myElement = soup.find("select", {"id": "kA"})
                 myElement = myElement.find("option", {"selected": "selected"})
                 myTitle = myElement.text  # chars only, no tags
                 del myElement
-                # print(myTitle)
 
                 # find body text
                 myElement = soup.find("div", {"class": "user-formatted-inner"})
                 myBody = myElement.prettify()
                 # myBody = myElement.encode()
                 # myBody = str(myElement)
-                del myElement
+            del myElement
+
+            # remove linebreaks and multiple spaces
+            myTitle = re.sub('\s+', " ", myTitle,
+                             flags=re.DOTALL | re.IGNORECASE)
+            print(myTitle)
+            # remove div start and end
+            myBody = re.sub('^<div[^>]*>', "", myBody,
+                            flags=re.DOTALL | re.IGNORECASE)
+            myBody = re.sub('</div>[^>]*$', "", myBody,
+                            flags=re.DOTALL | re.IGNORECASE)
 
             out = f"<h1>{myTitle}</h1>\n{myBody}\n"
 
@@ -87,8 +112,19 @@ def extract_chapter_text():
 
 
 def html_modify():
-    print("html_modify")
-    html_start = """<!DOCTYPE html>
+    for lang in languages:
+        if lang == 'en':
+            html_start = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="author" content="Eliezer Yudkowsky" />
+<title>Harry Potter and the Methods of Rationality</title>
+</head>
+<body>
+"""
+        elif lang == 'de':
+            html_start = """<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -97,70 +133,76 @@ def html_modify():
 </head>
 <body>
 """
-    html_end = "</body></html>"
+        html_end = "</body></html>"
 
-    fhAll = open("output/hpmor-de.html", mode='w',
-                 encoding='utf-8', newline='\n')
-    fhAll.write(html_start)
+        fhAll = open(f"output/hpmor-{lang}.html", mode='w',
+                     encoding='utf-8', newline='\n')
+        fhAll.write(html_start)
 
-    for fileIn in sorted(glob.glob("html-2-chapters-extracted/de/*.html")):
-        (filePath, fileName) = os.path.split(fileIn)
-        fileOut = f"html-3-cleaned/de/{fileName}"
-        with open(fileIn, mode='r', encoding='utf-8', newline='\n') as fh:
-            cont = fh.read()
-        soup = BeautifulSoup(cont, features='html.parser')
+        for fileIn in sorted(glob.glob(f"html-2-chapters-extracted/{lang}/*.html")):
+            (filePath, fileName) = os.path.split(fileIn)
+            fileOut = f"html-3-cleaned/{lang}/{fileName}"
+            with open(fileIn, mode='r', encoding='utf-8', newline='\n') as fh:
+                cont = fh.read()
+            soup = BeautifulSoup(cont, features='html.parser')
 
-        # find header
-        myElement = soup.find("h1")
-        myTitle = myElement.text  # chars only, no tags
-        del myElement
-        print(myTitle)
+            # find header
+            myElement = soup.find("h1")
+            myTitle = myElement.text  # chars only, no tags
+            myElement.replace_with("")
+            del myElement
+            print(myTitle)
 
-        # find body text
-        myElement = soup.find("div", {"class": "user-formatted-inner"})
-        # s = str(myElement)
-        s = myElement.prettify()
+            # find body text
+            myElement = soup
+            # s = str(myElement)
+            s = myElement.prettify()
 
-        s = html_tuning(s)
-        myElement = BeautifulSoup(s, features='html.parser')
-        myBody = myElement.prettify()
-        # myBody = myElement.encode()
-        del myElement
+            s = html_tuning(s, lang=lang)
+            myElement = BeautifulSoup(s, features='html.parser')
+            myBody = myElement.prettify()
+            # myBody = myElement.encode()
+            del myElement
 
-        out = f"<h1>{myTitle}</h1>\n{myBody}\n"
+            out = f"<h1>{myTitle}</h1>\n{myBody}\n"
 
-        with open(fileOut, mode='w', encoding='utf-8', newline='\n') as fh:
-            fh.write(html_start)
-            fh.write(out)
-            fh.write(html_end)
-        fhAll.write(out)
-        # break
-    fhAll.write(html_end)
-    fhAll.close()
+            with open(fileOut, mode='w', encoding='utf-8', newline='\n') as fh:
+                fh.write(html_start)
+                fh.write(out)
+                fh.write(html_end)
+            fhAll.write(out)
+            # break
+        fhAll.write(html_end)
+        fhAll.close()
 
 
-def html_tuning(s: str) -> str:
+def html_tuning(s: str, lang: str) -> str:
     """
     cleanup spans and divs
     """
     # whitespace at start of line
     s = re.sub('\n\s+', "\n", s)
     #
+    # cleanup divs and spans
     # alternatively define them via
     # <style>
     # div.user_center {	text-align: center; }
     # </style>
     #
+    # cleanup spans
     s = re.sub('<span class="user_normal">(.*?)</span>', r"\1", s,
                flags=re.DOTALL | re.IGNORECASE)
     s = re.sub('<span class="user_underlined">(.*?)</span>', r"<u>\1</u>", s,
                flags=re.DOTALL | re.IGNORECASE)
-    s = re.sub('<span class="user_italic">(.*?)</span>', r"<i>\1</i>", s,
+    s = re.sub('<span style="text-decoration:underline;">(.*?)</span>', r"<u>\1</u>", s,
+               flags=re.DOTALL | re.IGNORECASE)
+
+    s = re.sub('<span class="user_italic">(.*?)</span>', r"<em>\1</em>", s,
                flags=re.DOTALL | re.IGNORECASE)
     s = re.sub('<span class="user_bold">(.*?)</span>', r"<b>\1</b>", s,
                flags=re.DOTALL | re.IGNORECASE)
-    # need to repeat b and i
-    s = re.sub('<span class="user_italic">(.*?)</span>', r"<i>\1</i>", s,
+    # need to repeat b and em
+    s = re.sub('<span class="user_italic">(.*?)</span>', r"<em>\1</em>", s,
                flags=re.DOTALL | re.IGNORECASE)
     s = re.sub('<span class="user_bold">(.*?)</span>', r"<b>\1</b>", s,
                flags=re.DOTALL | re.IGNORECASE)
@@ -172,9 +214,7 @@ def html_tuning(s: str) -> str:
                flags=re.DOTALL | re.IGNORECASE)
     s = re.sub('<div class="user_left">(.*?)</div>', r"<left>\1</left>", s,
                flags=re.DOTALL | re.IGNORECASE)
-    # TODO: this is dangerous if another div is in the doc. better fix first and last line manually?
-    s = re.sub('<div class="user-formatted-inner">(.*?)</div>', r"\1", s,
-               flags=re.DOTALL | re.IGNORECASE)
+
     # 4x br -> 2x br
     s = re.sub('<br/>\s*<br/>\s*<br/>\s*<br/>', "<br/><br/>",
                s, flags=re.DOTALL | re.IGNORECASE)
@@ -197,9 +237,9 @@ def html_tuning(s: str) -> str:
 
     # multiple spaces
     s = re.sub('  +', " ", s)
-    # space before puctuation
+    # remove space before puctuation
     s = re.sub(' ([\.,:;])', r"\1", s)
-    # space after puctuation
+    # add space after puctuation
     s = re.sub('([a-zA-Z][\.,:;])([A-Z])', r"\1 \2", s)
 
     # spaces before " at lineend
@@ -216,9 +256,44 @@ def html_tuning(s: str) -> str:
     # 1x
     s = re.sub(r'("\w[^"]+)\s+<br/>\s+([^"]+")', r'\1\2',
                s, flags=re.DOTALL | re.IGNORECASE)
+
+    if lang == 'en':
+        s = s.replace('<hr noshade="noshade" size="1"/>', "<hr/>")
+    elif lang == 'de':
+        s = s.replace('."Wie kannst du das', '. "Wie kannst du das')
+        s = s.replace('Mannes erstickte."Peter hatte',
+                      'Mannes erstickte. "Peter hatte')
+        s = s.replace('begann zu gehen."Und pass auf, dass',
+                      'begann zu gehen. "Und pass auf, dass')
+        s = s.replace('Auroren,"ist der Grund', 'Auroren, "ist der Grund')
+        s = s.replace('Draco?"sagte', 'Draco?" sagte')
+        s = s.replace('Blick zu."Hör mal', 'Blick zu. "Hör mal')
+        s = s.replace('Kopf."Ich', 'Kopf. "Ich')
+        s = s.replace('Bäume."Halte', 'Bäume. "Halte')
+        s = s.replace('Quirrell."Ich denke', 'Quirrell. "Ich denke')
+        s = s.replace('Verteidigungsprofessor."Wir',
+                      'Verteidigungsprofessor. "Wir')
+        s = s.replace('Glück."Also', 'Glück. "Also')
+
+    # nice looking quotation signs
+    # en &ldquo;example&rdquo;
+    # de &bdquo;Beispiel&ldquo;
+    if lang == 'de':
+        q_left = "&bdquo;"
+        q_right = "&ldquo;"
+    else:
+        q_left = "&ldquo;"
+        q_right = "&rdquo;"
+    # left
+    s = re.sub('([\s\(]+)"', rf'\1{q_left}', s)
+    s = re.sub('(\.\.\.)"(\w)', rf'\1{q_left}\2', s)
+    # right
+    s = re.sub('"([\s,\.!\?\)\-]+)', rf'{q_right}\1', s)
+    s = re.sub('([\w])"([;])', rf'\1{q_right}\2', s)
+
     return s
 
 
-download_all_chapters()
-extract_chapter_text()
+# download_all_chapters()
+# extract_chapter_text()
 html_modify()
