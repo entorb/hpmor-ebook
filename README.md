@@ -25,7 +25,7 @@ German translation for [Harry Potter and the Methods of Rationality](https://www
 - [html by DieFuechsin (chapter 34-78)](https://www.fanfiktion.de/s/5c793dfe000a402030774dc7/1/Harry-Potter-und-die-Methoden-der-Rationalitaet-Ubersetzung-HPMOR)
 - [html von TralexHPMOR chapter 22-27](https://www.fanfiktion.de/s/59a29b7f000813c22ec1454b/1/Harry-Potter-und-die-Methoden-des-rationalen-Denkens)
 - [YouTube German Audiobook (in progress)](https://www.youtube.com/watch?v=h32Ht-HUbL0&list=PLfgJSXz3-j3aYhWyR3Q5JzcI3h_eibPls)
-- [pdf by elkablo](https://github.com/elkablo/hpmor), based on [Jost's translation (chapter 1-22)](https://www.fanfiktion.de/s/4cb8beb50000203e067007d0/1/Harry-Potter-und-die-Methoden-des-rationalen-Denkens) and on [rjl20's EN LaTeX PDF Repo](https://github.com/rjl20/hpmor). elkablo's resulting DE-PDF can be found [here](https://blackhole.sk/~kabel/tmp/hpmor-1.pdf)
+- [pdf by elkablo](https://github.com/elkablo/hpmor), based on [Jost's translation (chapter 1-22)](https://www.fanfiktion.de/s/4cb8beb50000203e067007d0/1/Harry-Potter-und-die-Methoden-des-rationalen-Denkens) and on [rjl20's EN LaTeX PDF repo](https://github.com/rjl20/hpmor). elkablo's resulting DE-PDF can be found [here](https://blackhole.sk/~kabel/tmp/hpmor-1.pdf)
  
 ### other pdf projects
 - [EN repo by rjl20](https://github.com/rjl20/hpmor) and [PDF](https://cdn.rawgit.com/rjl20/hpmor/0c10d2e8b6bd68e88fd2fc6e6b233140917e7314/out/hpmor.pdf) (linked at hpmor.com)
@@ -40,8 +40,6 @@ German translation for [Harry Potter and the Methods of Rationality](https://www
   - [calibre](https://calibre-ebook.com) another, also OpenSource
   - [Fanfic to epub](http://ff2ebook.com/index.php)
 - LaTeX -> EPUB is not a preferred way, as EPUB under the hood is html.
-
-
 
 ## OLD: TODOs for own translations
 ### source text fetch and convert to LaTeX
