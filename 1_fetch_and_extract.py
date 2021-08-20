@@ -150,11 +150,16 @@ def html_cleanup(s: str) -> str:
                flags=re.DOTALL | re.IGNORECASE)
     s = re.sub('<div class="user-formatted-inner">(.*?)</div>', r"\1", s,
                flags=re.DOTALL | re.IGNORECASE)
+    # 4x br -> 2x br
+    s = re.sub('<br/>\s*<br/>\s*<br/>\s*<br/>', "<br/><br/>", s, flags=re.DOTALL | re.IGNORECASE)
+    # 3x br -> 2x br
+    s = re.sub('<br/>\s*<br/>\s*<br/>', "<br/><br/>", s, flags=re.DOTALL | re.IGNORECASE)
     # double br
     # s = re.sub('<br/>\s*<br/>', "<br/>", s, flags=re.DOTALL | re.IGNORECASE)
     s = re.sub('<i>\s*</i>', "", s, flags=re.DOTALL | re.IGNORECASE)
     s = re.sub('<u>\s*</u>', "", s, flags=re.DOTALL | re.IGNORECASE)
     s = re.sub('<b>\s*</b>', "", s, flags=re.DOTALL | re.IGNORECASE)
+    s = re.sub('<center>\s*</center>', "", s, flags=re.DOTALL | re.IGNORECASE)
     # double br again
     # s = re.sub('<br/>\s*<br/>', "<br/>", s, flags=re.DOTALL | re.IGNORECASE)
 
