@@ -1,6 +1,22 @@
 # hpmor-translation
 German translation for [Harry Potter and the Methods of Rationality](https://www.hpmor.com) by Eliezer Yudkowsky
 
+##TODOs
+- [x] find complete translation
+- [x] fetch it
+- [x] extract chapters to single files
+- [x] auto-cleanup files
+- [ ] manual-cleanup files
+- [x] join to complete .html
+- [x] convert to .epub, .mobi
+- [x] add title image
+- [x] set meta data in .epub
+- [ ] write preamble
+
+## IDEAS
+- [ ] convert br to p for long lines
+- [ ] remove comments after download of files
+
 ## Research
 ### check out other pdf projects
 - [ ] https://www.reddit.com/r/HPMOR/comments/gvj0x2/german_printed_version_of_book_1_anyone_interested/
