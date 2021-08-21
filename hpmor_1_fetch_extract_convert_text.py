@@ -296,7 +296,6 @@ def html_tuning(s: str, lang: str) -> str:
 
 
 if __name__ == "__main__":
-    # unit_tests()
-    # download_all_chapters()
-    # extract_chapter_text()
+    download_all_chapters()
+    extract_chapter_text()
     html_modify()
