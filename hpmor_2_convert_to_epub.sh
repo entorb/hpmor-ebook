@@ -1,9 +1,10 @@
 # requirements
 # Linux
-# sudo apt-get install pandoc
+# sudo apt-get install pandoc calibre
 
 # MacOS
 # brew install pandoc
+# brew install calibre
 
 # required for pdf
 # sudo apt install texlive texlive-latex-base texlive-base texlive-lang-german texlive-latex-extra
@@ -32,7 +33,6 @@
 echo === html to markdown ===
 for LANG in en de; 
   do 
-    # epub
     pandoc -o output/hpmor-$LANG.md    output/hpmor-$LANG.html &
 done
 wait
@@ -40,7 +40,6 @@ wait
 echo === markdown to epub ===
 for LANG in en de; 
   do 
-    # epub
     pandoc -o output/hpmor-$LANG.epub  images/title-$LANG.md   output/hpmor-$LANG.md &
 done
 wait
@@ -48,8 +47,9 @@ wait
 echo === epub to mobi and PDF ===
 for LANG in en de; 
   do 
-    # mobi
-    pandoc -o output/hpmor-$LANG.mobi  output/hpmor-$LANG.epub &
+    # mobi via calibre on Mac
+    /Applications/calibre.app/Contents/MacOS/ebook-convert output/hpmor-$LANG.epub output/hpmor-$LANG.mobi &
+    # pandoc -o output/hpmor-$LANG.mobi  output/hpmor-$LANG.epub &
     # pdf did not work from html, so started from epub instead
     pandoc -o output/hpmor-$LANG.pdf   output/hpmor-$LANG.epub &
   done

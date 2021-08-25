@@ -9,3 +9,4 @@ tex2pdf*/
 
 images/*.pdf
 images/*.xcf
+images/.DS_Store

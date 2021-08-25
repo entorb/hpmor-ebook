@@ -149,6 +149,8 @@ def html_modify():
             myTitle = myElement.text  # chars only, no tags
             myElement.replace_with("")
             del myElement
+            if lang == 'de' and myTitle == "1. Einführung":
+                myTitle = "1. Vorwort zur Übersetzung"
             print(myTitle)
 
             # find body text
@@ -241,7 +243,7 @@ def html_tuning(s: str, lang: str) -> str:
     # remove space before puctuation
     s = re.sub(' ([\.,:;])', r"\1", s)
     # add space after puctuation
-    s = re.sub('([a-zA-Z][\.,:;])([A-Z])', r"\1 \2", s)
+    s = re.sub('([a-zA-Z][\.,:;])([a-zA-Z])', r"\1 \2", s)
 
     # spaces before " at lineend
     s = re.sub('\s+"\n', '"\n', s, flags=re.DOTALL | re.IGNORECASE)
@@ -249,13 +251,13 @@ def html_tuning(s: str, lang: str) -> str:
     s = re.sub('\n\n+', "\n", s)
     # remove linebreaks from sentences containing quotation marks
     # 3x
-    s = re.sub(r'("\w[^"]+)\s+<br/>\s+([^"]+)\s+<br/>\s+([^"]+)\s+<br/>\s+([^"]+")', r'\1\2\3\4',
+    s = re.sub(r'("\w[^"]+)\s+<br/>\s+([^"]+)\s+<br/>\s+([^"]+)\s+<br/>\s+([^"]+")', r'\1 \2 \3 \4',
                s, flags=re.DOTALL | re.IGNORECASE)
     # 2x
-    s = re.sub(r'("\w[^"]+)\s+<br/>\s+([^"]+)\s+<br/>\s+([^"]+")', r'\1\2\3',
+    s = re.sub(r'("\w[^"]+)\s+<br/>\s+([^"]+)\s+<br/>\s+([^"]+")', r'\1 \2 \3',
                s, flags=re.DOTALL | re.IGNORECASE)
     # 1x
-    s = re.sub(r'("\w[^"]+)\s+<br/>\s+([^"]+")', r'\1\2',
+    s = re.sub(r'("\w[^"]+)\s+<br/>\s+([^"]+")', r'\1 \2',
                s, flags=re.DOTALL | re.IGNORECASE)
 
     if lang == 'en':
@@ -296,6 +298,6 @@ def html_tuning(s: str, lang: str) -> str:
 
 
 if __name__ == "__main__":
-    download_all_chapters()
-    extract_chapter_text()
+    # download_all_chapters()
+    # extract_chapter_text()
     html_modify()

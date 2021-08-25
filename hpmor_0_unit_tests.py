@@ -11,7 +11,7 @@ s2 = """<br/>
 Text
 </em>
 <br/>"""
-assert html_tuning(s1, lang='de') == s2
+assert html_tuning(s1, lang='de') == s2, f"\n{s1}\n!=\n{s2}"
 
 # de: user_bold
 s1 = """<br/>
@@ -24,7 +24,7 @@ s2 = """<br/>
 Text
 </b>
 <br/>"""
-assert html_tuning(s1, lang='de') == s2
+assert html_tuning(s1, lang='de') == s2, f"\n{s1}\n!=\n{s2}"
 
 # de: user_italic
 s1 = """<br/>
@@ -37,7 +37,7 @@ s2 = """<br/>
 Text
 </em>
 <br/>"""
-assert html_tuning(s1, lang='de') == s2
+assert html_tuning(s1, lang='de') == s2, f"\n{s1}\n!=\n{s2}"
 
 # empty tags
 s1 = """<br/>
@@ -50,7 +50,7 @@ s1 = """<br/>
 <br/>"""
 s2 = """<br/>
 <br/>"""
-assert html_tuning(s1, lang='de') == s2
+assert html_tuning(s1, lang='de') == s2, f"\n{s1}\n!=\n{s2}"
 
 # div center
 s1 = """<div class="user_center">
@@ -67,7 +67,7 @@ Text
 </em>
 </b>
 </center>"""
-assert html_tuning(s1, lang='de') == s2
+assert html_tuning(s1, lang='de') == s2, f"\n{s1}\n!=\n{s2}"
 
 # <p style="text-align:center
 s1 = """<p style="text-align:center;">
@@ -76,7 +76,7 @@ Text
 s2 = """<p style="text-align:center;">
 Text
 </p>"""
-assert html_tuning(s1, lang='en') == s2, s2
+assert html_tuning(s1, lang='en') == s2, f"\n{s1}\n!=\n{s2}"
 
 # convert " to lang specific
 s1 = """<br/>
@@ -85,16 +85,21 @@ s1 = """<br/>
 s2 = """<br/>
 &ldquo;Text&rdquo;
 <br/>"""
-assert html_tuning(s1, lang='en') == s2, s2
+assert html_tuning(s1, lang='en') == s2, f"\n{s1}\n!=\n{s2}"
 s2 = """<br/>
 &bdquo;Text&ldquo;
 <br/>"""
-assert html_tuning(s1, lang='de') == s2, s2
+assert html_tuning(s1, lang='de') == s2, f"\n{s1}\n!=\n{s2}"
 
 # <p style="text-align:center
 s1 = '<hr noshade="noshade" size="1"/>'
 s2 = '<hr/>'
-assert html_tuning(s1, lang='en') == s2, s2
+assert html_tuning(s1, lang='en') == s2, f"\n{s1}\n!=\n{s2}"
+
+
+s1 = "war.Kannst war;Kannst war:Kannst war,Kannst"
+s2 = "war. Kannst war; Kannst war: Kannst war, Kannst"
+assert html_tuning(s1, lang='de') == s2, f"\n{s1}\n!=\n{s2}"
 
 # s2 = html_tuning(s1, lang='en')
 # print(s2)
