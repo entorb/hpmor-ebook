@@ -54,3 +54,6 @@ for LANG in en de;
     pandoc -o output/hpmor-$LANG.pdf   output/hpmor-$LANG.epub &
   done
 wait
+
+# upload to entorb.net/hpmor
+rsync -rvhu --delete --delete-excluded --no-perms output/hpmor-* entorb@entorb.net:html/hpmor/

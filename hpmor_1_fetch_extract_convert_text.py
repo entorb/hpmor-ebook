@@ -76,9 +76,9 @@ def extract_chapter_text():
 
                 # find body text
                 myElement = soup.find("div", {"id": "storycontent"})
-                myBody = myElement.prettify()
+                # myBody = myElement.prettify()
                 # myBody = myElement.encode()
-                # myBody = str(myElement)
+                myBody = str(myElement)
 
             elif lang == 'de':
                 # find chapter name from dropdown
@@ -88,9 +88,9 @@ def extract_chapter_text():
 
                 # find body text
                 myElement = soup.find("div", {"class": "user-formatted-inner"})
-                myBody = myElement.prettify()
+                # myBody = myElement.prettify()
                 # myBody = myElement.encode()
-                # myBody = str(myElement)
+                myBody = str(myElement)
             del myElement
 
             # remove linebreaks and multiple spaces
@@ -155,13 +155,14 @@ def html_modify():
 
             # find body text
             myElement = soup
-            # s = str(myElement)
-            s = myElement.prettify()
+            s = str(myElement)
+            # s = myElement.prettify()
 
             s = html_tuning(s, lang=lang)
             myElement = BeautifulSoup(s, features='html.parser')
-            myBody = myElement.prettify()
+            # myBody = myElement.prettify()
             # myBody = myElement.encode()
+            myBody = str(myElement)
             del myElement
 
             out = f"<h1>{myTitle}</h1>\n{myBody}\n"
@@ -298,6 +299,6 @@ def html_tuning(s: str, lang: str) -> str:
 
 
 if __name__ == "__main__":
-    # download_all_chapters()
-    # extract_chapter_text()
+    download_all_chapters()
+    extract_chapter_text()
     html_modify()
