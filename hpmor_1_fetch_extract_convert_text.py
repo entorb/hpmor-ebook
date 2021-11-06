@@ -5,23 +5,20 @@ import requests
 
 from bs4 import BeautifulSoup  # pip install beautifulsoup4
 
+# my helper
+import helper
 
 languages = ('en', 'de')
 
+
+# make output dirs
+os.makedirs('output', exist_ok=True)
 for lang in languages:
-    for dir in (f'html-1-download/{lang}/', f'html-2-chapters-extracted/{lang}/', f'html-3-cleaned/{lang}/', 'output'):
+    for dir in (f'html-1-download/{lang}/', f'html-2-chapters-extracted/{lang}/', f'html-3-cleaned/{lang}/'):
         os.makedirs(dir, exist_ok=True)
-
-
-def download_file(url: str, filepath: str):
-    """download file from url to filepath"""
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0 ',
-    }
-    cont = requests.get(url, headers=headers, verify=True).content
-    # verify=False -> skip SSL cert verification: CERTIFICATE_VERIFY_FAILED
-    with open(filepath, mode='bw') as fh:
-        fh.write(cont)
+lang = "en-latex"
+for dir in (f'html-1-download/{lang}/', f'html-3-cleaned/{lang}/'):
+    os.makedirs(dir, exist_ok=True)
 
 
 def download_all_chapters():
@@ -39,7 +36,7 @@ def download_all_chapters():
             if not os.path.exists(fileOut):
                 print(f"downloading chapter %03d" % chapter)
                 url = url_base.replace("<---chapter--->", str(chapter))
-                download_file(url=url, filepath=fileOut)
+                helper.download_file(url=url, filepath=fileOut)
 
 
 def extract_chapter_text():
@@ -111,26 +108,7 @@ def extract_chapter_text():
 
 def html_modify():
     for lang in languages:
-        if lang == 'en':
-            html_start = """<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="author" content="Eliezer Yudkowsky" />
-<title>Harry Potter and the Methods of Rationality</title>
-</head>
-<body>
-"""
-        elif lang == 'de':
-            html_start = """<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="author" content="Eliezer Yudkowsky" />
-<title>Harry Potter und die Methoden des rationalen Denkens</title>
-</head>
-<body>
-"""
+        html_start = helper.get_html_start(lang=lang)
         html_end = "</body></html>"
 
         fhAll = open(f"output/hpmor-{lang}.html", mode='w',
@@ -225,26 +203,25 @@ def html_tuning(s: str, lang: str) -> str:
     # 3x br -> 2x br
     s = re.sub('<br/>\s*<br/>\s*<br/>', "<br/><br/>",
                s, flags=re.DOTALL | re.IGNORECASE)
-    # double br
-    # s = re.sub('<br/>\s*<br/>', "<br/>", s, flags=re.DOTALL | re.IGNORECASE)
     # drop empty tags 3x
     s = re.sub(r'<(\w+)>\s*</\1>', "", s, flags=re.DOTALL | re.IGNORECASE)
     s = re.sub(r'<(\w+)>\s*</\1>', "", s, flags=re.DOTALL | re.IGNORECASE)
     s = re.sub(r'<(\w+)>\s*</\1>', "", s, flags=re.DOTALL | re.IGNORECASE)
-    # double br again
-    # s = re.sub('<br/>\s*<br/>', "<br/>", s, flags=re.DOTALL | re.IGNORECASE)
 
+    # double br: remove spaces
+    s = re.sub('<br/>\s+<br/>', "<br/><br/>", s,
+               flags=re.DOTALL | re.IGNORECASE)
     # if more than 300 char -> use p instead of br
     s = re.sub('<br/>\n(.{200,})\n', r'<p>\n\1\n</p>', s, flags=re.IGNORECASE)
     s = re.sub('<br/>\s*<p>', "<p>", s, flags=re.DOTALL | re.IGNORECASE)
     s = re.sub('</p>\s*<br/>', "</p>", s, flags=re.DOTALL | re.IGNORECASE)
 
-    # multiple spaces
-    s = re.sub('  +', " ", s)
     # remove space before puctuation
     s = re.sub(' ([\.,:;])', r"\1", s)
     # add space after puctuation
     s = re.sub('([a-zA-Z][\.,:;])([a-zA-Z])', r"\1 \2", s)
+    # multiple spaces
+    s = re.sub('  +', " ", s)
 
     # spaces before " at lineend
     s = re.sub('\s+"\n', '"\n', s, flags=re.DOTALL | re.IGNORECASE)
@@ -264,6 +241,10 @@ def html_tuning(s: str, lang: str) -> str:
     if lang == 'en':
         s = s.replace('<hr noshade="noshade" size="1"/>', "<hr/>")
     elif lang == 'de':
+        # br -> p
+        s = "<p>" + s + "</p>"
+        s = re.sub('<br/><br/>', "</p><p>", s, flags=re.DOTALL | re.IGNORECASE)
+
         s = s.replace('."Wie kannst du das', '. "Wie kannst du das')
         s = s.replace('Mannes erstickte."Peter hatte',
                       'Mannes erstickte. "Peter hatte')
@@ -300,5 +281,5 @@ def html_tuning(s: str, lang: str) -> str:
 
 if __name__ == "__main__":
     download_all_chapters()
-    extract_chapter_text()
-    html_modify()
+    # extract_chapter_text()
+    # html_modify()
