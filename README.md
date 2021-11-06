@@ -3,7 +3,7 @@ Script for generating eBooks for [Harry Potter and the Methods of Rationality (H
 
 Generated eBooks can be found at [https://entorb.net/hpmor/](https://entorb.net/hpmor/).
 
-## TODOs
+## Tasks
 - [x] find [complete German translation](https://www.fanfiktion.de/s/60044849000ccc541aef297e/)
 - [x] fetch EN and DE original html text
 - [x] extract chapters to single files
