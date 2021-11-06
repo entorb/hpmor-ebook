@@ -18,6 +18,9 @@ Generated eBooks can be found at [https://entorb.net/hpmor/](https://entorb.net/
 - [ ] DE: replace br by p
 - [x] converted " to nice looking ones
 
+## TODO
+- [ ] generate EPUB from [LaTeX repo by rjl20](https://github.com/rjl20/hpmor) instead, as there are some typos fixed.
+
 ## Research
 ### DE translations on the web
 - [html by Schneefl0cke (comlete)](https://www.fanfiktion.de/s/60044849000ccc541aef297e/)
