@@ -33,6 +33,7 @@ Generated eBooks can be found at [https://entorb.net/hpmor/](https://entorb.net/
 - [EN repo by xenohedron](https://github.com/xenohedron/hpmor-xetex)
 - [DE repo by elkablo](https://github.com/elkablo/hpmor) based on [rjl20's repo](https://github.com/rjl20/hpmor) (chapters 1-22), resulting [DE-PDF](https://blackhole.sk/~kabel/tmp/hpmor-1.pdf)
 - [Reddit post by elkablo](https://www.reddit.com/r/HPMOR/comments/gvj0x2/german_printed_version_of_book_1_anyone_interested/)
+- [Cover designs for printing](https://github.com/ianstormtaylor/hpmor)
 
 ### EPUB tools
 - [HPMOR epub by ikeran.org via web.archive](https://web.archive.org/web/20170624094133/http://ikeran.org/rationality.epub) (linked at hpmor.com)
