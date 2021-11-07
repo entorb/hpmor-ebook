@@ -14,40 +14,19 @@ languages = ('en', 'de')
 # make output dirs
 os.makedirs('output', exist_ok=True)
 for lang in languages:
-    for dir in (f'html-1-download/{lang}/', f'html-2-chapters-extracted/{lang}/', f'html-3-cleaned/{lang}/'):
+    for dir in (f'chapters-1-download/{lang}/', f'chapters-2-extracted/{lang}/', f'chapters-3-cleaned/{lang}/'):
         os.makedirs(dir, exist_ok=True)
-lang = "en-latex"
-for dir in (f'html-1-download/{lang}/', f'html-3-cleaned/{lang}/'):
-    os.makedirs(dir, exist_ok=True)
-
-
-def download_all_chapters():
-    """Downloads into html-1-download/<lang>/ only if fileOut does not exist"""
-    chapter_last = 0
-    for lang in languages:
-        if lang == 'en':
-            chapter_last = 122
-            url_base = f"http://www.hpmor.com/chapter/<---chapter--->"
-        elif lang == 'de':
-            chapter_last = 121
-            url_base = f"https://www.fanfiktion.de/s/60044849000ccc541aef297e/<---chapter--->/"
-        for chapter in range(0+1, chapter_last+1):
-            fileOut = f"html-1-download/{lang}/%03d.html" % chapter
-            if not os.path.exists(fileOut):
-                print(f"downloading chapter %03d" % chapter)
-                url = url_base.replace("<---chapter--->", str(chapter))
-                helper.download_file(url=url, filepath=fileOut)
 
 
 def extract_chapter_text():
     """
-    extract chapter text from html and writes result into html-2-chapters-extracted/
+    extract chapter text from html and writes result into chapters-2-extracted/
     2 modifications are done: removal of comments and removal of javascript
     """
     for lang in languages:
-        for fileIn in sorted(glob.glob(f"html-1-download/{lang}/*.html")):
+        for fileIn in sorted(glob.glob(f"chapters-1-download/{lang}/*.html")):
             (filePath, fileName) = os.path.split(fileIn)
-            fileOut = f"html-2-chapters-extracted/{lang}/{fileName}"
+            fileOut = f"chapters-2-extracted/{lang}/{fileName}"
             with open(fileIn, mode='r', encoding='utf-8', newline='\n') as fh:
                 cont = fh.read()
 
@@ -115,9 +94,9 @@ def html_modify():
                      encoding='utf-8', newline='\n')
         fhAll.write(html_start)
 
-        for fileIn in sorted(glob.glob(f"html-2-chapters-extracted/{lang}/*.html")):
+        for fileIn in sorted(glob.glob(f"chapters-2-extracted/{lang}/*.html")):
             (filePath, fileName) = os.path.split(fileIn)
-            fileOut = f"html-3-cleaned/{lang}/{fileName}"
+            fileOut = f"chapters-3-cleaned/{lang}/{fileName}"
             with open(fileIn, mode='r', encoding='utf-8', newline='\n') as fh:
                 cont = fh.read()
             soup = BeautifulSoup(cont, features='html.parser')
@@ -280,6 +259,5 @@ def html_tuning(s: str, lang: str) -> str:
 
 
 if __name__ == "__main__":
-    download_all_chapters()
-    # extract_chapter_text()
-    # html_modify()
+    extract_chapter_text()
+    html_modify()

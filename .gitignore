@@ -1,8 +1,8 @@
 .vscode/
 __pycache__/
-html-1-download/
-html-2-chapters-extracted/
-html-3-cleaned/
+chapters-1-download/
+chapters-2-extracted/
+chapters-3-cleaned/
 resources/
 output/
 tex2pdf*/

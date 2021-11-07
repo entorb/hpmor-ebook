@@ -1,4 +1,4 @@
-from hpmor_1_fetch_extract_convert_text import html_tuning
+from hpmor_1b_extract_and_convert import html_tuning
 
 # de: user_center
 s1 = """<br/>
