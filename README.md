@@ -15,11 +15,12 @@ Generated eBooks can be found at [https://entorb.net/hpmor/](https://entorb.net/
 - [x] set meta data in .epub
 - [x] write preamble
 - [x] DE: convert br to p for long lines
-- [ ] DE: replace br by p
+- [x] DE: replace double br by p
 - [x] converted " to nice looking ones
 
-## TODO
-- [ ] generate EPUB from [LaTeX repo by rjl20](https://github.com/rjl20/hpmor) instead, as there are some typos fixed.
+## TODO: alternative approach for EN ebook
+- [ ] generate EPUB from [LaTeX repo by rjl20](https://github.com/rjl20/hpmor) instead, as there are quite some typos fixed and other nice improvements.
+- [ ] manually convert DE HTML text into latex format to generate a beautiful PDF.
 
 ## Research
 ### DE translations on the web
@@ -27,7 +28,7 @@ Generated eBooks can be found at [https://entorb.net/hpmor/](https://entorb.net/
 - [html by Patneu (chapter 1-33)](https://www.fanfiktion.de/s/55610c610004dede273a3811/)
 - [html by Jost (chapter 1-22)](https://www.fanfiktion.de/s/4cb8beb50000203e067007d0/)
 - [html by DieFuechsin (chapter 34-78)](https://www.fanfiktion.de/s/5c793dfe000a402030774dc7/)
-- [html von Tralex (chapter 22-27)](https://www.fanfiktion.de/s/59a29b7f000813c22ec1454b/s)
+- [html by Tralex (chapter 22-27)](https://www.fanfiktion.de/s/59a29b7f000813c22ec1454b/s)
 - [YouTube German Audiobook (in progress)](https://www.youtube.com/watch?v=h32Ht-HUbL0&list=PLfgJSXz3-j3aYhWyR3Q5JzcI3h_eibPls)
  
 ### other pdf projects
