@@ -6,7 +6,7 @@ import glob
 import helper
 
 # from bs4 import BeautifulSoup  # pip install beautifulsoup4
-lang = "en-latex"
+lang = "en2"
 for dir in (f'chapters-1-download/{lang}/',):
     os.makedirs(dir, exist_ok=True)
 

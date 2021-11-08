@@ -12,25 +12,12 @@ import glob
 # TO TEST
 # footnotes via ebook reader on page 1
 
-lang = "en-latex"
+lang = "en2"
 
 # create output folders
 for dir in (f'chapters-3-cleaned/{lang}/',):
     os.makedirs(dir, exist_ok=True)
 
-html_start = """<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="author" content="Eliezer Yudkowsky" />
-<title>Harry Potter and the Methods of Rationality</title>
-<link rel='stylesheet' href='hpmor.css'/>
-</head>
-<body>
-"""
-
-
-html_end = """</body>\n</html>"""
 
 css = """
 div.letter {
@@ -91,9 +78,29 @@ span.uppercase{
 	text-transform: uppercase;
 }
 """
-with open(f'chapters-3-cleaned/{lang}/hpmor.css', mode='w',
-          encoding='utf-8', newline='\n') as fh:
-    fh.write(css)
+
+# inline instead
+# with open(f'output/hpmor-{lang}.css', mode='w',
+#           encoding='utf-8', newline='\n') as fh:
+#     fh.write(css)
+
+
+html_start = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="author" content="Eliezer Yudkowsky" />
+<title>Harry Potter and the Methods of Rationality</title>
+<style>
+{css}
+</style>
+</head>
+<body>
+"""
+# <link rel='stylesheet' href='hpmor-{lang}.css'/>
+
+
+html_end = """</body>\n</html>"""
 
 
 counter_chapter = 0
@@ -456,7 +463,7 @@ def find_tex_commands(s: str) -> list:
     return l
 
 
-fhAll = open(f"chapters-3-cleaned/{lang}/hpmor.html", mode='w',
+fhAll = open(f"output/hpmor-{lang}.html", mode='w',
              encoding='utf-8', newline='\n')
 fhAll.write(html_start)
 

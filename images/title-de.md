@@ -17,7 +17,7 @@ cover-image: images/hpmor-de-elkablo-2.jpg
 lang: de-DE
 description: Deutsche Übersetzung von Harry Potter and the Methods of Rationality 
 ibooks:
-  version: 0.0.1
+  version: 0.1.0
 ...
 
 Vorwort des eBooks
