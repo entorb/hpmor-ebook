@@ -37,56 +37,45 @@ div.letter {
 	font-style: italic;
 	margin-left: 2em;
 }
-
 div.verse {
     margin-left: 2em;
 }
-
 div.playdialog {
     text-indent: -1em;
     margin-left: 3em;
 }
-
 div.headlines {
 }
-
-
-
 div.center {
     text-align: center;
 }
-
 div.center_sc {
     text-align: center;
     font-variant: small-caps;
 }
-
 div.later {
     text-align: center;
 }
-
 div.emph {
     font-style: italic;
 }
-
 
 span.abbrev{
 	text-transform: lowercase;
 	font-variant: small-caps;
 }
-
-span.shout{
+span.prophesy{
 	font-variant: small-caps;
 }
-
 span.scream{
 	text-transform: uppercase;
 }
-
+span.shout{
+	font-variant: small-caps;
+}
 span.parsel{
 	font-style: italic;
 }
-
 span.headline_header{
 }
 span.headline{
@@ -98,10 +87,10 @@ span.headline_label{
 span.smallcaps{
 	font-variant: small-caps;
 }
-
-
+span.uppercase{
+	text-transform: uppercase;
+}
 """
-
 with open(f'chapters-3-cleaned/{lang}/hpmor.css', mode='w',
           encoding='utf-8', newline='\n') as fh:
     fh.write(css)
@@ -122,14 +111,13 @@ def simplify_tex(s: str) -> str:
     s = re.sub(r'\\lettrinepara\[ante=(.+?)\]\{(.)\}\{(.*?)\}', r"\1\2\3", s,
                flags=re.DOTALL | re.IGNORECASE)
 
-    # add linebreaks
-    s = re.sub(r'\s*\\item', r"\n\\item", s)
-    s = re.sub(r'\s*\\begin', r"\n\\begin", s)
+    # add linebreaks to \item and \begin
+    s = re.sub(r'(?<!\n)\\(begin|end|item)\b', r"\n\\\1", s)
 
-    # OmakeIVsection
+    # OmakeIVsection -> section
     s = re.sub(r'\\OmakeIVsection\[.*?\]\{', r"\\section{", s)
     s = s.replace('\\OmakeIVsection{', "\\section{")
-    # \latersection
+    # \latersection -> section
     s = s.replace('\\latersection{', "\\section{")
     # OmakeIVspecialsection
     s = re.sub(r'\\makeatletter\n\\newcommand{\\OmakeIVspecialsection}.*?\\chapter{Omake Files IV, Alternate Parallels}', r'\\chapter{Omake Files IV, Alternate Parallels}\n', s,
@@ -140,14 +128,16 @@ def simplify_tex(s: str) -> str:
     # The Witch and the Wardrobe
     s = s.replace(
         "\\OmakeIVspecialsection[5]{\\fontspec[ExternalLocation]{NarniaBLL}456}", "\\section{The Witch and the Wardrobe}")
+    # ThunderSmarts
     s = s.replace(
         "\\OmakeIVspecialsection[2]{\\fontspec[ExternalLocation]{Thundercats}ThunderSmarts}", "\\section{ThunderSmarts}")
+    # Utilitarian Twilight
     s = s.replace(
         "\\OmakeIVspecialsection{\\fontspec[ExternalLocation]{Twilight}Utilitarian Twilight\protect\\footnotemark}", "\\section{Utilitarian Twilight}")
 
     # remove Latex comments
     s = re.sub(r'(?<!\\)%.*\n', "\n", s)
-    # multiple spaces
+    # remove multiple spaces
     s = re.sub(r'  +', r" ", s)
     return s
 
@@ -161,49 +151,49 @@ def tex2html(s: str) -> str:
     s = re.sub(r'\\begin\{center\}(.+?Transfiguration is not permanent!.+?)\\end\{center\}', r'<div class="center">Transfiguration is not permanent!</div>\n', s,
                flags=re.DOTALL | re.IGNORECASE)
 
-    was = """{
-\\begin{center}
-\\includegraphics[scale=0.125]{Deathly_Hallows_Sign.png}
-\\end{center}
-}"""
+    was = "{\n\\begin{center}\n\\includegraphics[scale=0.125]{Deathly_Hallows_Sign.png}\n\\end{center}\n}"
     s = s.replace(was, "")
 
-    # \begin{align*} -> writtenNote
-    myMatches = re.finditer(
-        r'\\begin\{align\*\}.+?\\end\{align\*\}', s, flags=re.DOTALL | re.IGNORECASE)
-    for myMatch in myMatches:
-        was = myMatch.group(0)
-        womit = was
-        womit = womit.replace("align*", "writtenNote")
-        womit = re.sub(r'\\hbox\{(.*?)\}', r"\1", womit)
-        womit = re.sub(r'\\intertext\{(.*?)\}', r"\1", womit, flags=re.DOTALL)
-        womit = re.sub(r'\\multicolumn\{2\}\{c\}\{(.*?)\}', r"\1", womit)
-        womit = womit.replace("\\scshape", "")
-        womit = womit.replace("\\centering", "")
-        womit = womit.replace("&", "")
-        womit = womit.replace("[1.5ex]", "")
-        s = s.replace(was, womit)
+    # paper notes in Chapter 13
+    if "Asking the Wrong Questions" in s:
+        # \begin{align*} -> writtenNote
+        myMatches = re.finditer(
+            r'\\begin\{align\*\}.+?\\end\{align\*\}', s, flags=re.DOTALL | re.IGNORECASE)
+        for myMatch in myMatches:
+            was = myMatch.group(0)
+            womit = was
+            womit = womit.replace("align*", "writtenNote")
+            womit = re.sub(r'\\hbox\{(.*?)\}', r"\1", womit)
+            womit = re.sub(r'\\intertext\{(.*?)\}',
+                           r"\1", womit, flags=re.DOTALL)
+            womit = re.sub(r'\\multicolumn\{2\}\{c\}\{(.*?)\}', r"\1", womit)
+            womit = womit.replace("\\scshape", "")
+            womit = womit.replace("\\centering", "")
+            womit = womit.replace("&", "")
+            womit = womit.replace("[1.5ex]", "")
+            s = s.replace(was, womit)
+        s = re.sub(r'\\begin\{center\}\s*\\scshape (\\MakeUppercase\{Warning\}.*?)\\end\{center\}', r'\\begin{writtenNote}\1\\end{writtenNote}', s,
+                   flags=re.DOTALL | re.IGNORECASE)
+        s = re.sub(r'\\begin\{center\}\s*\\scshape(\nAttempt failed.*?)\\end\{center\}', r'\\begin{writtenNote}\1\\end{writtenNote}', s,
+                   flags=re.DOTALL | re.IGNORECASE)
 
-    s = re.sub(r'\\begin\{center\}\s*\\scshape (\\MakeUppercase\{Warning\}.*?)\\end\{center\}', r'\\begin{writtenNote}\1\\end{writtenNote}', s,
-               flags=re.DOTALL | re.IGNORECASE)
+    # notes in chapter 22
+    if "The Scientific Method" in s:
+        s = re.sub(r'\\begin\{center\}\s*\\itshape\n\{\\scshape (Observation:)\}(.*?)\\end\{center\}', r'\\begin{writtenNote}\\textsc{\1}\2\\end{writtenNote}', s,
+                   flags=re.DOTALL | re.IGNORECASE)
+        s = s.replace("{\\scshape Hypotheses:}", "\\textsc{Hypotheses:}")
+        s = s.replace("{\\scshape Tests:}", "\\textsc{Tests:}")
 
-    s = re.sub(r'\\begin\{center\}\s*\\scshape(\nAttempt failed.*?)\\end\{center\}', r'\\begin{writtenNote}\1\\end{writtenNote}', s,
-               flags=re.DOTALL | re.IGNORECASE)
-
-    s = re.sub(r'\\begin\{center\}\s*\\itshape\n\{\\scshape (Observation:)\}(.*?)\\end\{center\}', r'\\begin{writtenNote}\\textsc{\1}\2\\end{writtenNote}', s,
-               flags=re.DOTALL | re.IGNORECASE)
-    s = s.replace("{\\scshape Hypotheses:}", "\\textsc{Hypotheses:}")
-    s = s.replace("\\scshape Hypotheses:", "\\textsc{Hypotheses:}")
-    s = s.replace("{\\scshape Tests:}", "\\textsc{Tests:}")
-    s = s.replace("\\scshape Tests:", "\\textsc{Tests:}")
-    s = re.sub(
-        r"\\itshape (Wizardry isn’t as powerful now as it was when Hogwarts was founded.) \\end\{samepage\}", r"\1", s)
-
-    s = s.replace("\itshape", "")
-
-    s = re.sub(r'\\begin\{centering\}\n\\begin\{samepage\}\n\\scshape (Observation:)(.*?)\\end\{centering\}', r'\\begin{writtenNote}\\textsc{\1}<br/>\2\\end{writtenNote}', s,
-               flags=re.DOTALL | re.IGNORECASE)
-    s = s.replace("{\scshape Result:}", "<br/>Result:")
+    # notes in chapter 23
+    if "Belief in Belief" in s:
+        s = re.sub(r'\\begin\{centering\}\n\\begin\{samepage\}\n\\scshape (Observation:)(.*?)\\end\{centering\}', r'\\begin{writtenNote}\\textsc{\1}<br/>\2\\end{writtenNote}', s,
+                   flags=re.DOTALL | re.IGNORECASE)
+        s = re.sub(
+            r"\n\\itshape (Wizardry isn’t as powerful now as it was when Hogwarts was founded.)\s*\\end\{samepage\}", r"\1", s)
+        s = s.replace("\\scshape Hypotheses:\n\n", "\\textsc{Hypotheses:}")
+        s = s.replace("\\scshape Tests:", "\\textsc{Tests:}")
+        s = s.replace("\itshape\n", "")
+        s = s.replace("{\scshape Result:}", "<br/>Result:")
 
     #
     # cleanup
@@ -231,6 +221,12 @@ def tex2html(s: str) -> str:
         "\\vskip 1\\baselineskip plus .5\\textheight minus 1\\baselineskip", "")
 
     # some simple replacings
+    s = s.replace("~", "&nbsp;")
+    s = s.replace("\\\\", "<br/>")
+    s = s.replace("\\$", "$")
+    s = s.replace("\\-", "-")
+    s = s.replace("\\@", "&nbsp;")
+
     s = s.replace("\\emdashhyp", "—")
     s = s.replace("\\censor{Hermione}", "xxx")
     s = s.replace("\\times", "&times;")
@@ -246,6 +242,7 @@ def tex2html(s: str) -> str:
     #
     # START OF REPLACEMENTS
     #
+
     # \chapters
     myMatches = re.finditer(r'(\\chapter\{([^\}]+)\})', s)
     for myMatch in myMatches:
@@ -268,53 +265,47 @@ def tex2html(s: str) -> str:
         s = s.replace(was, womit)
 
     # simple commands without parameters
-    # \SPHEW
-    s = s.replace("\\SPHEW", "\\abbrev{SPHEW}")
     # \am and pm
     s = re.sub(r'\\([ap])m\b', r"\1.m.", s,
                flags=re.DOTALL | re.IGNORECASE)
+    # \SPHEW
+    s = s.replace("\\SPHEW", "\\abbrev{SPHEW}")
 
-    # simple commands with 1 parameter
-    # \sout
-    s = re.sub(r'\\sout\{([^\}]+)\}', r'<s>\1</s>', s,
+    # simple commands with 1 parameter not containing other commands
+    # custum spans
+    s = re.sub(r'\\(abbrev|prophesy|scream|shout)\{([^\}\\]+)\}', r'<span class="\1">\2</span>', s,
                flags=re.DOTALL | re.IGNORECASE)
-
-    # \section{...} -> h2
-    s = re.sub(r'\\section\{([^\}]+)\}', r'<h2>\1</h2>', s,
+    # emph
+    s = re.sub(r'\\emph\{([^\}\\]+)\}', r"<i>\1</i>", s,
+               flags=re.DOTALL | re.IGNORECASE)
+    # \sout = strike through
+    s = re.sub(r'\\(sout)\{([^\}\\]+?)\}', r'<s>\2</s>', s,
                flags=re.DOTALL | re.IGNORECASE)
     # \url
-    s = re.sub(r'\\url\{([^\}]+)\}', r'<a href="\1">\1</a>', s,
-               flags=re.DOTALL | re.IGNORECASE)
-
-    # \abbrev{QX31} -> small caps
-    s = re.sub(r'\\(abbrev)\{([^\}]+)\}', r'<span class="abbrev">\2</span>', s,
-               flags=re.DOTALL | re.IGNORECASE)
-    # textsc
-    s = re.sub(r'\\(textsc)\{([^\}]+)\}', r'<span class="smallcaps">\2</span>', s,
+    s = re.sub(r'\\(url)\{([^\}\\]+?)\}', r'<a href="\2">\2</a>', s,
                flags=re.DOTALL | re.IGNORECASE)
     # \textbf
-    s = re.sub(r'\\(textbf)\{([^\}]+)\}', r'<b>\2</b>', s,
+    s = re.sub(r'\\(textbf)\{([^\}\\]+)\}', r'<b>\2</b>', s,
                flags=re.DOTALL | re.IGNORECASE)
-    # \shout and \prophesy -> small caps
-    s = re.sub(r'\\(shout|prophesy)\{([^\}]+)\}', r'<span class="shout">\2</span>', s,
+    # \textsc
+    s = re.sub(r'\\(textsc)\{([^\}\\]+)\}', r'<span class="smallcaps">\2</span>', s,
                flags=re.DOTALL | re.IGNORECASE)
-    # \scream and MakeUppercase -> Uppercase
-    s = re.sub(r'\\(scream|MakeUppercase|inlineheadline)\{([^\}]+)\}', r'<span class="scream">\2</span>', s,
+    # custum spans 2nd run
+    s = re.sub(r'\\(abbrev|prophesy|scream|shout)\{([^\}\\]+)\}', r'<span class="\1">\2</span>', s,
                flags=re.DOTALL | re.IGNORECASE)
-
-    # # {... \scshape ...}
-    # s = re.sub(r'\{([^\}]*)\\scshape([^\}]*)\}', r'{<span class="smallcaps">\1 \2</span>}', s,
-    #            flags=re.DOTALL | re.IGNORECASE)
+    # uppercase
+    s = re.sub(r'\\(MakeUppercase|inlineheadline)\{([^\}\\]+)\}', r'<span class="uppercase">\2</span>', s,
+               flags=re.DOTALL | re.IGNORECASE)
+    # emph 2nd run
+    s = re.sub(r'\\emph\{([^\}\\]+)\}', r"<i>\1</i>", s,
+               flags=re.DOTALL | re.IGNORECASE)
+    # \section{...} -> h2
+    s = re.sub(r'\\(section)\{([^\}\\]+)\}', r'<h2>\2</h2>', s,
+               flags=re.DOTALL | re.IGNORECASE)
 
     # emph
     # emph in emph
     s = re.sub(r'\\emph\{([^\\\}]+)\\emph\{([^\\\}]+)\}([^\\\}])\}', r"<i>\1</i>\2<i>\3</i>", s,
-               flags=re.DOTALL | re.IGNORECASE)
-    # emph
-    s = re.sub(r'\\emph\{([^\}]+)\}', r"<i>\1</i>", s,
-               flags=re.DOTALL | re.IGNORECASE)
-    # emph again, because first did not match all
-    s = re.sub(r'\\emph\{([^\}]+)\}', r"<i>\1</i>", s,
                flags=re.DOTALL | re.IGNORECASE)
 
     # environments
@@ -323,15 +314,13 @@ def tex2html(s: str) -> str:
     # letter writtenNote
     s = re.sub(r'\\begin\{writtenNote\}(.+?)\\end\{writtenNote\}', r'<div class="letter"><p>\1</p></div>\n', s,
                flags=re.DOTALL | re.IGNORECASE)
-
     # letterAddress
-    s = re.sub(r'\\letterAddress\{([^\}]+)\}', r"\1", s,
+    s = re.sub(r'\\letterAddress\{([^\}\\]+)\}', r"\1", s,
                flags=re.DOTALL | re.IGNORECASE)
-
     # letterClosing
-    s = re.sub(r'\\letterClosing\[([^\}]+)\]\{([^\}]+)\}', r"\1<br/>\2", s,
+    s = re.sub(r'\\letterClosing\[([^\]]+)\]\{([^\}\\]+)\}', r"\1<br/>\2", s,
                flags=re.DOTALL | re.IGNORECASE)
-    s = re.sub(r'\\letterClosing\{([^\}]+)\}', r"\1", s,
+    s = re.sub(r'\\letterClosing\{([^\}\\]+)\}', r"\1", s,
                flags=re.DOTALL | re.IGNORECASE)
 
     # \begin{em} and emph
@@ -359,8 +348,6 @@ def tex2html(s: str) -> str:
     # \begin{headlines}
     s = re.sub(r'\\begin\{headlines\}(.+?)\\end\{headlines\}', r'<div class="headlines">\1</div>\n', s,
                flags=re.DOTALL | re.IGNORECASE)
-
-    # headlines: header
     s = re.sub(r'\\header\{(.+?)\}',
                r'<span class="headline_header">\1</span>', s, flags=re.DOTALL)
     s = re.sub(r'\\label\{(.+?)\}',
@@ -377,7 +364,7 @@ def tex2html(s: str) -> str:
     s = re.sub(r'\s*\\item(.+?)\n', r'<li>\1</li>\n', s)
 
     # \parsel
-    myMatches = re.finditer(r'(\\parsel\{(.+?)\})', s)
+    myMatches = re.finditer(r'(\\parsel\{([^\}\\]+)\})', s)
     for myMatch in myMatches:
         was = myMatch.group(1)
         womit = convert_parsel(myMatch.group(2))
@@ -387,13 +374,9 @@ def tex2html(s: str) -> str:
     s = re.sub(r'\\later\b', r'<div class="later">*</div>', s,
                flags=re.DOTALL | re.IGNORECASE)
 
-    # \box -> span
-    s = re.sub(r'&?\\hbox\{([^\}]+)\}', r'<span>\1</span>', s,
-               flags=re.DOTALL | re.IGNORECASE)
-
     # footnotes_authorsnotetext
     myMatches = re.finditer(
-        r'(\\authorsnotetext\{(.+?)\})', s, flags=re.DOTALL | re.IGNORECASE)
+        r'(\\authorsnotetext\{([^\}\\]+?)\})', s, flags=re.DOTALL | re.IGNORECASE)
     for myMatch in myMatches:
         was = myMatch.group(1)
         womit = convert_footnotes(myMatch.group(2), authorsnote=True)
@@ -401,7 +384,7 @@ def tex2html(s: str) -> str:
 
     # footnotetext
     myMatches = re.finditer(
-        r'(\\footnotetext\{(.+?)\})', s, flags=re.DOTALL | re.IGNORECASE)
+        r'(\\footnotetext\{([^\}\\]+?)\})', s, flags=re.DOTALL | re.IGNORECASE)
     for myMatch in myMatches:
         was = myMatch.group(1)
         womit = convert_footnotes(myMatch.group(2), authorsnote=False)
@@ -412,9 +395,6 @@ def tex2html(s: str) -> str:
     s = re.sub(r'\[\s*\]', r'', s, flags=re.DOTALL)
 
     # Latex spaces, etc
-    s = s.replace("~", "&nbsp;")
-    s = s.replace("\\\\", "<br/>")
-    s = s.replace("\\$", "$")
     s = s.strip()
 
     s = s.replace("\n\n", "</p>\n<p>")
