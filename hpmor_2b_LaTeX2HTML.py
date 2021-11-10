@@ -1,18 +1,12 @@
 import os
 import re
 import glob
-
+from datetime import date
 
 # TODO:
 
-# CSS classes
-# p.letter
-# span.abbrev
-
-# TO TEST
-# footnotes via ebook reader on page 1
-
 lang = "en2"
+today = date.today()
 
 # create output folders
 for dir in (f'chapters-3-cleaned/{lang}/',):
@@ -22,14 +16,14 @@ for dir in (f'chapters-3-cleaned/{lang}/',):
 css = """
 div.letter {
 	font-style: italic;
-	margin-left: 2em;
+	margin-left: 1em;
 }
 div.verse {
-    margin-left: 2em;
+    margin-left: 1em;
 }
 div.playdialog {
     text-indent: -1em;
-    margin-left: 3em;
+    margin-left: 2em;
 }
 div.headlines {
 }
@@ -79,7 +73,7 @@ span.uppercase{
 }
 """
 
-# inline instead
+# inline instead, since easier for conversion to epub
 # with open(f'output/hpmor-{lang}.css', mode='w',
 #           encoding='utf-8', newline='\n') as fh:
 #     fh.write(css)
@@ -103,8 +97,23 @@ html_start = f"""<!DOCTYPE html>
 html_end = """</body>\n</html>"""
 
 
+html_preamble = f"""
+<h1>Preamble of this eBook</h1>
+<p>This book is not my work, I just converted the text into eBook formats.</p>
+<p>The original version of this great book 'Harry Potter and the Methods of Rationality' by Eliezer Yudkowsky is:<br/>
+<a href="https://www.hpmor.com">https://www.hpmor.com</a></p>
+<p>The typesetting as well as the reviewed text are adopted from:<br/>
+<a href="https://github.com/rjl20/hpmor">https://github.com/rjl20/hpmor</a></p>
+<p>This eBook was created {today} and it's home is:<br/>
+<a href="https://entorb.net/hpmor/">https://entorb.net/hpmor/</a></p>
+<p>Source code of converter scripts can be found at:<br/>
+<a href="https://github.com/entorb/hpmor-eBook">https://github.com/entorb/hpmor-eBook</a></p>
+<p>Have fun on your journey, <br/><i>Torben Menke</i></p>
+"""
+
+
 counter_chapter = 0
-counter_footnotes = 0
+# counter_footnotes = 0
 
 
 def simplify_tex(s: str) -> str:
@@ -231,6 +240,9 @@ def tex2html(s: str) -> str:
     s = s.replace("~", "&nbsp;")
     s = s.replace("\\\\", "<br/>")
     s = s.replace("\\$", "$")
+    s = s.replace("\\%", "%")
+    s = s.replace("\\&", "&")
+    s = s.replace("\\#", "#")
     s = s.replace("\\-", "-")
     s = s.replace("\\@", "&nbsp;")
 
@@ -239,6 +251,7 @@ def tex2html(s: str) -> str:
     s = s.replace("\\times", "&times;")
     s = s.replace("$\mbox{P}=\mbox{NP}$", "<i>P</i>=<i>NP</i>")
     s = s.replace("\mbox{“Salazar’s—”}", "“Salazar’s—”")
+    s = s.replace("170–{140}", "170–140")
 
     # env to delete the optional parameters from
     s = re.sub(r'\\begin\{(verse)\}\[[^\]]+\]', r'\\begin{\1}', s)
@@ -273,7 +286,7 @@ def tex2html(s: str) -> str:
 
     # simple commands without parameters
     # \am and pm
-    s = re.sub(r'\\([ap])m\b', r"\1.m.", s,
+    s = re.sub(r'\\([ap])m\b', r"&nbsp;\1.m.", s,
                flags=re.DOTALL | re.IGNORECASE)
     # \SPHEW
     s = s.replace("\\SPHEW", "\\abbrev{SPHEW}")
@@ -386,7 +399,8 @@ def tex2html(s: str) -> str:
         r'(\\authorsnotetext\{([^\}\\]+?)\})', s, flags=re.DOTALL | re.IGNORECASE)
     for myMatch in myMatches:
         was = myMatch.group(1)
-        womit = convert_footnotes(myMatch.group(2), authorsnote=True)
+        womit = f" [Author's Note: <i>{myMatch.group(2).strip()}</i>] "
+        # womit = convert_footnotes(myMatch.group(2), authorsnote=True)
         s = s.replace(was, womit)
 
     # footnotetext
@@ -394,7 +408,8 @@ def tex2html(s: str) -> str:
         r'(\\footnotetext\{([^\}\\]+?)\})', s, flags=re.DOTALL | re.IGNORECASE)
     for myMatch in myMatches:
         was = myMatch.group(1)
-        womit = convert_footnotes(myMatch.group(2), authorsnote=False)
+        womit = f" [Author's Note: <i>{myMatch.group(2).strip()}</i>] "
+        # womit = convert_footnotes(myMatch.group(2), authorsnote=False)
         s = s.replace(was, womit)
 
     # leftovers
@@ -414,6 +429,8 @@ def tex2html(s: str) -> str:
     s = s.replace("<p><div ", "<div ")
     s = s.replace("</div></p>", "</div>")
 
+    s = re.sub(r'</i>\]\s*</p>', '</i>] ', s, flags=re.DOTALL)
+
     s = s.replace("<p></p>\n", "")
     # multiple spaces
     s = re.sub(r'  +', r" ", s)
@@ -423,7 +440,8 @@ def tex2html(s: str) -> str:
 def convert_chapter(s: str) -> str:
     global counter_chapter
     counter_chapter += 1
-    out = f"<h1>{counter_chapter}. {s}</h1>"
+    # chapter class is used in calibre to detect chapters
+    out = f"<h1 class=\"chapter\">{counter_chapter}. {s}</h1>"
     return out
 
 
@@ -448,7 +466,7 @@ def convert_footnotes(s: str, authorsnote: bool = False) -> str:
         s_authorsnote = "Author’s note: "
     out = f""" <a epub:type="noteref" href="#fn{counter_footnotes}"><sup>{counter_footnotes}</sup></a>
 <aside epub:type="footnote" id="fn{counter_footnotes}">
-<p>{s_authorsnote}{s}</p>
+{s_authorsnote}{s}
 </aside> """
     return out
 
@@ -466,6 +484,7 @@ def find_tex_commands(s: str) -> list:
 fhAll = open(f"output/hpmor-{lang}.html", mode='w',
              encoding='utf-8', newline='\n')
 fhAll.write(html_start)
+fhAll.write(html_preamble)
 
 
 l_tex_commands_unhandled = []

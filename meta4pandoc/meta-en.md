@@ -13,7 +13,7 @@ cover-image: images/hpmor-en.jpg
 lang: en-US
 # description: Deutsche Übersetzung von Harry Potter and the Methods of Rationality 
 ibooks:
-  version: 0.1.0
+  version: 1.1.0
 ...
 Preamble of this eBook
 ======================
