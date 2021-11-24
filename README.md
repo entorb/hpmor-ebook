@@ -20,7 +20,7 @@ Generated eBooks can be found at [https://entorb.net/hpmor/](https://entorb.net/
 
 ## TODO: alternative approach for EN ebook
 - [x] generate EPUB from [LaTeX repo by rjl20](https://github.com/rjl20/hpmor) instead, as there are quite some typos fixed and other nice improvements.
-- [ ] do not loose html css styling upon conversion to md and epub 
+- [x] do not loose html css styling upon conversion to md and epub 
 - [ ] manually convert DE HTML text into latex format to generate a beautiful PDF.
 
 ## Research
