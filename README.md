@@ -36,7 +36,7 @@ Generated eBook V2 in EN can be found at [https://github.com/rjl20/hpmor/release
 - [html by Tralex (chapter 22-27)](https://www.fanfiktion.de/s/59a29b7f000813c22ec1454b/s)
 - [YouTube German Audiobook (in progress)](https://www.youtube.com/watch?v=h32Ht-HUbL0&list=PLfgJSXz3-j3aYhWyR3Q5JzcI3h_eibPls)
  
-### other pdf projects
+### pdf projects
 - [EN repo by rjl20](https://github.com/rjl20/hpmor) and resulting [PDF](https://github.com/rjl20/hpmor/releases/download/v1.1.2/hpmor-1.1.2.pdf)
 - [EN repo by xenohedron](https://github.com/xenohedron/hpmor-xetex)
 - [DE repo by elkablo](https://github.com/elkablo/hpmor) based on [rjl20's repo](https://github.com/rjl20/hpmor) and [Jost's translation (chapter 1-22)](https://www.fanfiktion.de/s/4cb8beb50000203e067007d0/). Resulting [DE-PDF](https://blackhole.sk/~kabel/tmp/hpmor-1.pdf)
