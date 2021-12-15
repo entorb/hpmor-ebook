@@ -1,7 +1,9 @@
 # HPMOR: generator for eBooks in English and German
 Script for generating eBooks for [Harry Potter and the Methods of Rationality (HPMOR)](https://www.hpmor.com) by Eliezer Yudkowsky. Featuring English original text as well as German translation by [Schneefl0cke](https://www.fanfiktion.de/s/60044849000ccc541aef297e/).
 
-Generated eBooks can be found at [https://entorb.net/hpmor/](https://entorb.net/hpmor/).
+Generated eBook in DE can be found at [https://entorb.net/hpmor/](https://entorb.net/hpmor/)
+
+Generated eBook V2 in EN can be found at [https://github.com/rjl20/hpmor/releases/latest/](https://github.com/rjl20/hpmor/releases/latest/)
 
 ## Tasks
 - [x] find [complete German translation](https://www.fanfiktion.de/s/60044849000ccc541aef297e/)
@@ -18,14 +20,16 @@ Generated eBooks can be found at [https://entorb.net/hpmor/](https://entorb.net/
 - [x] DE: replace double br by p
 - [x] converted " to nice looking ones
 
-## TODO: alternative approach for EN ebook
-- [x] generate EPUB from [LaTeX repo by rjl20](https://github.com/rjl20/hpmor) instead, as there are quite some typos fixed and other nice improvements.
+## V2: alternative approach for EN ebook
+- [x] generate EPUB from [PDF LaTeX repo by rjl20](https://github.com/rjl20/hpmor) instead, as there are quite some typos fixed and other nice typesetting improvements.
 - [x] do not loose html css styling upon conversion to md and epub 
-- [ ] manually convert DE HTML text into latex format to generate a beautiful PDF.
+- [x] use [calibre](https://calibre-ebook.com/) instead of [Pandoc](https://pandoc.org), as Pandoc loses the css style 
+- [x] merge ebook converter script into [PDF LaTeX repo by rjl20](https://github.com/rjl20/hpmor)
+- [x] find the release here: https://github.com/rjl20/hpmor/releases/latest/
 
 ## Research
 ### DE translations on the web
-- [html by Schneefl0cke (comlete)](https://www.fanfiktion.de/s/60044849000ccc541aef297e/)
+- [html by Schneefl0cke (complete)](https://www.fanfiktion.de/s/60044849000ccc541aef297e/)
 - [html by Patneu (chapter 1-33)](https://www.fanfiktion.de/s/55610c610004dede273a3811/)
 - [html by Jost (chapter 1-22)](https://www.fanfiktion.de/s/4cb8beb50000203e067007d0/)
 - [html by DieFuechsin (chapter 34-78)](https://www.fanfiktion.de/s/5c793dfe000a402030774dc7/)
