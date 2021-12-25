@@ -1,3 +1,4 @@
+#!/bin/sh
 # TODO:
 # how to prevent the loss of the html css styling upon conversion from html to epub via pandoc?
 # -> use calibre instead of pandoc
