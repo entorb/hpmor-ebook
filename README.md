@@ -22,8 +22,8 @@ Generated eBook V2 in EN can be found at [https://github.com/rjl20/hpmor/release
 
 ## V2: alternative approach for EN ebook
 - [x] generate EPUB from [PDF LaTeX repo by rjl20](https://github.com/rjl20/hpmor) instead, as there are quite some typos fixed and other nice typesetting improvements.
-- [x] do not loose html css styling upon conversion to md and epub 
-- [x] use [calibre](https://calibre-ebook.com/) instead of [Pandoc](https://pandoc.org), as Pandoc loses the css style 
+- [x] do not loose html css styling upon conversion to md and epub
+- [x] use [calibre](https://calibre-ebook.com/) instead of [Pandoc](https://pandoc.org), as Pandoc loses the css style
 - [x] merge ebook converter script into [PDF LaTeX repo by rjl20](https://github.com/rjl20/hpmor)
 - [x] find the release here: https://github.com/rjl20/hpmor/releases/latest/
 
@@ -35,7 +35,7 @@ Generated eBook V2 in EN can be found at [https://github.com/rjl20/hpmor/release
 - [html by DieFuechsin (chapter 34-78)](https://www.fanfiktion.de/s/5c793dfe000a402030774dc7/)
 - [html by Tralex (chapter 22-27)](https://www.fanfiktion.de/s/59a29b7f000813c22ec1454b/s)
 - [YouTube German Audiobook (in progress)](https://www.youtube.com/watch?v=h32Ht-HUbL0&list=PLfgJSXz3-j3aYhWyR3Q5JzcI3h_eibPls)
- 
+
 ### pdf projects
 - [EN repo by rjl20](https://github.com/rjl20/hpmor) and resulting [PDF](https://github.com/rjl20/hpmor/releases/download/v1.1.2/hpmor-1.1.2.pdf)
 - [EN repo by xenohedron](https://github.com/xenohedron/hpmor-xetex)

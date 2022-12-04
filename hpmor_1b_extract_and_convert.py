@@ -1,12 +1,17 @@
+"""
+Extract Text from HTML and modify.
+"""
+import glob
 import os
 import re
-import glob
-import requests
 
 from bs4 import BeautifulSoup  # pip install beautifulsoup4
 
-# my helper
 import helper
+
+# import requests
+
+# my helper
 
 languages = ("en", "de", "fr")
 
@@ -14,30 +19,34 @@ languages = ("en", "de", "fr")
 # make output dirs
 os.makedirs("output", exist_ok=True)
 for lang in languages:
-    for dir in (
+    for my_dir in (
         f"chapters-1-download/{lang}/",
         f"chapters-2-extracted/{lang}/",
         f"chapters-3-cleaned/{lang}/",
     ):
-        os.makedirs(dir, exist_ok=True)
+        os.makedirs(my_dir, exist_ok=True)
 
 
 def extract_chapter_text():
     """
-    extract chapter text from html and writes result into chapters-2-extracted/
+    Extract chapter text from html and writes result into chapters-2-extracted.
+
     2 modifications are done: removal of comments and removal of javascript
     """
     for lang in languages:
         for fileIn in sorted(glob.glob(f"chapters-1-download/{lang}/*.html")):
             (filePath, fileName) = os.path.split(fileIn)
             fileOut = f"chapters-2-extracted/{lang}/{fileName}"
-            with open(fileIn, mode="r", encoding="utf-8", newline="\n") as fh:
+            with open(fileIn, encoding="utf-8", newline="\n") as fh:
                 cont = fh.read()
 
             # cleanup comments and scripts
             cont = re.sub("<!--.*?-->", "", cont, flags=re.DOTALL)
             cont = re.sub(
-                "<script.*?</script>", "", cont, flags=re.DOTALL | re.IGNORECASE
+                "<script.*?</script>",
+                "",
+                cont,
+                flags=re.DOTALL | re.IGNORECASE,
             )
 
             soup = BeautifulSoup(cont, features="html.parser")
@@ -53,7 +62,10 @@ def extract_chapter_text():
                 myElement = soup.find("div", {"id": "chapter-title"})
                 myTitle = myElement.text  # chars only, no tags
                 myTitle = re.sub(
-                    "^Chapter (\d+):", r"\1.", myTitle, flags=re.DOTALL | re.IGNORECASE
+                    r"^Chapter (\d+):",
+                    r"\1.",
+                    myTitle,
+                    flags=re.DOTALL | re.IGNORECASE,
                 )
 
                 # find body text
@@ -76,7 +88,7 @@ def extract_chapter_text():
             del myElement
 
             # remove linebreaks and multiple spaces
-            myTitle = re.sub("\s+", " ", myTitle, flags=re.DOTALL | re.IGNORECASE)
+            myTitle = re.sub(r"\s+", " ", myTitle, flags=re.DOTALL | re.IGNORECASE)
             print(myTitle)
             # remove outer encapsolating div start and end
             myBody = re.sub("^<div[^>]*>", "", myBody, flags=re.DOTALL | re.IGNORECASE)
@@ -93,15 +105,18 @@ def html_modify():
         html_start = helper.get_html_start(lang=lang)
         html_end = "</body></html>"
 
-        fhAll = open(
-            f"output/hpmor-{lang}.html", mode="w", encoding="utf-8", newline="\n"
+        fhAll = open(  # noqa: SIM115
+            f"output/hpmor-{lang}.html",
+            mode="w",
+            encoding="utf-8",
+            newline="\n",
         )
         fhAll.write(html_start)
 
         for fileIn in sorted(glob.glob(f"chapters-2-extracted/{lang}/*.html")):
             (filePath, fileName) = os.path.split(fileIn)
             fileOut = f"chapters-3-cleaned/{lang}/{fileName}"
-            with open(fileIn, mode="r", encoding="utf-8", newline="\n") as fh:
+            with open(fileIn, encoding="utf-8", newline="\n") as fh:
                 cont = fh.read()
             soup = BeautifulSoup(cont, features="html.parser")
 
@@ -140,13 +155,15 @@ def html_modify():
 
 def html_tuning(s: str, lang: str) -> str:
     """
+    Cleanup.
+
     cleanup spans and divs
     fix small typos
     fix "
     TODO: add unit tests!
     """
     # whitespace at start of line
-    s = re.sub("\n\s+", "\n", s)
+    s = re.sub("\n\\s+", "\n", s)
     #
     # cleanup divs and spans
     # alternatively define them via
@@ -222,14 +239,17 @@ def html_tuning(s: str, lang: str) -> str:
 
     # 4x br -> 2x br
     s = re.sub(
-        "<br/>\s*<br/>\s*<br/>\s*<br/>",
+        r"<br/>\s*<br/>\s*<br/>\s*<br/>",
         "<br/><br/>",
         s,
         flags=re.DOTALL | re.IGNORECASE,
     )
     # 3x br -> 2x br
     s = re.sub(
-        "<br/>\s*<br/>\s*<br/>", "<br/><br/>", s, flags=re.DOTALL | re.IGNORECASE
+        r"<br/>\s*<br/>\s*<br/>",
+        "<br/><br/>",
+        s,
+        flags=re.DOTALL | re.IGNORECASE,
     )
     # drop empty tags 3x
     s = re.sub(r"<(\w+)>\s*</\1>", "", s, flags=re.DOTALL | re.IGNORECASE)
@@ -237,21 +257,21 @@ def html_tuning(s: str, lang: str) -> str:
     s = re.sub(r"<(\w+)>\s*</\1>", "", s, flags=re.DOTALL | re.IGNORECASE)
 
     # double br: remove spaces
-    s = re.sub("<br/>\s+<br/>", "<br/><br/>", s, flags=re.DOTALL | re.IGNORECASE)
+    s = re.sub(r"<br/>\s+<br/>", "<br/><br/>", s, flags=re.DOTALL | re.IGNORECASE)
     # if more than 300 char -> use p instead of br
     s = re.sub("<br/>\n(.{200,})\n", r"<p>\n\1\n</p>", s, flags=re.IGNORECASE)
-    s = re.sub("<br/>\s*<p>", "<p>", s, flags=re.DOTALL | re.IGNORECASE)
-    s = re.sub("</p>\s*<br/>", "</p>", s, flags=re.DOTALL | re.IGNORECASE)
+    s = re.sub(r"<br/>\s*<p>", "<p>", s, flags=re.DOTALL | re.IGNORECASE)
+    s = re.sub(r"</p>\s*<br/>", "</p>", s, flags=re.DOTALL | re.IGNORECASE)
 
     # remove space before puctuation
-    s = re.sub(" ([\.,:;])", r"\1", s)
+    s = re.sub(r" ([\.,:;])", r"\1", s)
     # add space after puctuation
-    s = re.sub("([a-zA-Z][\.,:;])([a-zA-Z])", r"\1 \2", s)
+    s = re.sub(r"([a-zA-Z][\.,:;])([a-zA-Z])", r"\1 \2", s)
     # multiple spaces
     s = re.sub("  +", " ", s)
 
     # spaces before " at lineend
-    s = re.sub('\s+"\n', '"\n', s, flags=re.DOTALL | re.IGNORECASE)
+    s = re.sub('\\s+"\n', '"\n', s, flags=re.DOTALL | re.IGNORECASE)
     # empty lines
     s = re.sub("\n\n+", "\n", s)
     # remove linebreaks from sentences containing quotation marks
@@ -271,7 +291,10 @@ def html_tuning(s: str, lang: str) -> str:
     )
     # 1x
     s = re.sub(
-        r'("\w[^"]+)\s+<br/>\s+([^"]+")', r"\1 \2", s, flags=re.DOTALL | re.IGNORECASE
+        r'("\w[^"]+)\s+<br/>\s+([^"]+")',
+        r"\1 \2",
+        s,
+        flags=re.DOTALL | re.IGNORECASE,
     )
 
     if lang == "en":
@@ -306,11 +329,11 @@ def html_tuning(s: str, lang: str) -> str:
         q_left = "&ldquo;"
         q_right = "&rdquo;"
     # left
-    s = re.sub('([\s\(]+)"', rf"\1{q_left}", s)
-    s = re.sub('(\.\.\.)"(\w)', rf"\1{q_left}\2", s)
+    s = re.sub(r'([\s\(]+)"', rf"\1{q_left}", s)
+    s = re.sub(r'(\.\.\.)"(\w)', rf"\1{q_left}\2", s)
     # right
-    s = re.sub('"([\s,\.!\?\)\-]+)', rf"{q_right}\1", s)
-    s = re.sub('([\w])"([;])', rf"\1{q_right}\2", s)
+    s = re.sub(r'"([\s,\.!\?\)\-]+)', rf"{q_right}\1", s)
+    s = re.sub(r'([\w])"([;])', rf"\1{q_right}\2", s)
 
     return s
 

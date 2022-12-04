@@ -11,7 +11,7 @@ creator:
 date: 2015-03-14
 cover-image: images/hpmor-en.jpg
 lang: en-US
-# description: Deutsche Übersetzung von Harry Potter and the Methods of Rationality 
+# description: Deutsche Übersetzung von Harry Potter and the Methods of Rationality
 ibooks:
   version: 1.1.0
 ...

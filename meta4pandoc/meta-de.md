@@ -8,14 +8,14 @@ creator:
 - role: author
   text: Eliezer Yudkowsky
 contributor:
-- role: Translator 
+- role: Translator
   text: Schneefl0cke
 #- role: Editor
 #  text: Torben Menke
 date: 2015-03-14
 cover-image: images/hpmor-de-elkablo-2.jpg
 lang: de-DE
-description: Deutsche Übersetzung von Harry Potter and the Methods of Rationality 
+description: Deutsche Übersetzung von Harry Potter and the Methods of Rationality
 ibooks:
   version: 1.1.0
 ...
